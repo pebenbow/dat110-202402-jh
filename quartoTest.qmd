@@ -1,0 +1,82 @@
+---
+title: "ggplot2 demo"
+author: "Norah Jones"
+date: "5/22/2021"
+format: 
+  html:
+    toc: true
+    fig-width: 8
+    fig-height: 4
+    code-fold: true
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+---
+
+::: callout-important
+This assignment is due Dec 1 at 11:59pm ET.
+:::
+
+# Getting Started
+
+## Packages
+
+```{r}
+#| label: load-packages
+#| output: false
+
+library(tidyverse)
+library(flextable)
+library(knitr)
+```
+
+# Exercises
+
+## Air Quality
+
+@fig-airquality further explores the impact of temperature on ozone level.
+
+{{< lipsum 1 >}}
+
+```{r}
+#| label: fig-airquality
+#| fig-cap: "Temperature and ozone level."
+#| warning: false
+
+ggplot(airquality, aes(x = Temp, y = Ozone)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  labs(
+    title = "Visualizing the relationship between temperature (F) and ozone level",
+    x = "Temperature (Fahrenheit)",
+    y = "Ozone level"
+  )
+```
+
+{{< pagebreak >}}
+
+## Looking at tabular data
+
+@fig-tabledata shows some of the unit-level data from our data frame.
+
+{{< lipsum 1 >}}
+
+```{r ft.align="left"}
+#| label: fig-tabledata
+#| fig-cap: "Table data"
+#| warning: false
+
+# Prep the data
+airquality_tidy <- airquality %>%
+  select(
+    Month,
+    Temp
+  ) %>%
+  group_by(Month) %>%
+  summarize(Avg_Temp = mean(Temp, rm.na = TRUE))
+
+# Visualizing with kable
+kable(airquality_tidy, align = "l")
+
+```
