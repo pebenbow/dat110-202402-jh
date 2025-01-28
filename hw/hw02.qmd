@@ -1,0 +1,233 @@
+---
+title: "Homework 02"
+subtitle: "CSC 110 - Data Science & Society"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+assignment: true
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    fig-width: 8
+    fig-height: 4
+  pdf:
+    toc: true
+    toc-depth: 1
+    fig-width: 8
+    fig-height: 5
+    geometry:
+      - top=20mm
+      - left=20mm
+      - right=20mm
+      - heightrounded
+---
+
+# Intro
+
+This assignment is all about bar charts, giving you more opportunities to learn and practice one of the most popular and versatile forms of data visualization. You'll be using the same Chetty dataset we've been working with already in class, which has been pre-loaded into this tutorial.
+
+**Note:** For this exercise, you do not need to worry about adding labels. Instead, focus your learning on the aesthetics needed to create these visualizations.
+
+::: callout-note
+I don't grade the homework for correct answers. I just check to see that you attempted the questions because these assignments are meant to give you valuable practice with techniques that we will use in class activities, labs, and quizzes.
+:::
+
+Happy coding!
+
+Prof.B
+
+# Setup
+
+Run the setup block below to load the packages you need and create the `chetty` data frame consisting of the data from our Excel file. This is the same data we worked with in Class 03!
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(readxl)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+chetty <- read_excel("data/Lab1_Chetty_2014.xlsx", skip=1)
+# The following code converts the variable top_100 from continuous to categorical
+chetty <- chetty %>%
+  mutate(top_100 = as.factor(top_100))
+```
+
+# Data preview
+
+As usual, let's start by previewing our data and asking some questions about it. You can use `glimpse(chetty)`, or just plain old `chetty`, to get a preview.
+
+```{r}
+#| label: preview-data
+#| echo: true
+#| include: true
+
+glimpse(chetty)
+```
+
+# Exercises
+
+## Part 1: geom_bar exercises
+
+### Question 1
+
+Make a bar chart that counts the number of CZs by region.
+
+::: callout-tip
+If you need help, check out [R4DS](https://r4ds.hadley.nz/data-visualize#visualizing-distributions){target="_blank"}.
+:::
+
+```{r}
+#| label: question-1
+#| echo: true
+#| include: true
+
+
+
+```
+
+### Question 2
+
+Make a bar chart that counts the number of CZs by urban vs. rural.
+
+```{r}
+#| label: question-2
+#| echo: true
+#| include: true
+
+
+
+```
+
+### Question 3
+
+In the R4DS reading for Class 04, [Section 9.5, Statistical transformations](https://r4ds.hadley.nz/layers.html#statistical-transformations){target="_blank"}, you learn about the "stats" that geoms use by default when visualizing data, and you learned how to override these default stats.
+
+Using that knowledge, create another bar chart that counts the number of CZs by region, and display **proportions** this time rather than counts.
+
+```{r}
+#| label: question-3
+#| echo: true
+#| include: true
+
+
+
+```
+
+### Question 4
+
+Make a bar chart that lets you compare the number of urban and rural CZ's within each of the four regions.
+
+::: callout-tip
+For this section, check out [Section 9.6 of R4DS](https://r4ds.hadley.nz/layers.html#position-adjustments){target="_blank"} and the concept of **position adjustments**. Play with some of the different position adjustments you can use.
+
+Pay special attention to the wording of the questions and analyze your output to see if the plots you are producing are meeting the criteria of each question.
+:::
+
+```{r}
+#| label: question-4
+#| echo: true
+#| include: true
+
+
+
+```
+
+### Question 5
+
+Make a bar chart that lets you compare the total number of CZ's within each of the four regions, **including the proportion that are urban and rural**.
+
+```{r}
+#| label: question-5
+#| echo: true
+#| include: true
+
+
+
+```
+
+### Question 6
+
+Make another bar chart that lets you easily compare the proportions of urban vs. rural CZs across the four regions.
+
+```{r}
+#| label: question-6
+#| echo: true
+#| include: true
+
+
+
+```
+
+## Part 2: geom_col exercises
+
+### Question 7
+
+Make a bar chart using `geom_col()` that counts the number of CZs by urban vs. rural.
+
+```{r}
+#| label: question-7
+#| echo: true
+#| include: true
+
+
+
+```
+
+### Question 8
+
+Make another chart with `geom_col()` that lets you easily compare the proportions of urban vs. rural CZs across the four regions. Again, remember to use position adjustments to experiment with different ways of seeing the data, and compare the output they give you.
+
+```{r}
+#| label: question-8
+#| echo: true
+#| include: true
+
+
+
+```
+
+## Part 3: Another trick
+
+For this last part, I'll introduce a neat little trick you can use to alter the layout of your visuals in `ggplot`.
+
+### Question 9
+
+First, make a bar chart that sums CZ populations (see `pop_2000`) by `division`.
+
+```{r}
+#| label: question-9
+#| echo: true
+#| include: true
+
+
+
+```
+
+### Question 10
+
+Now a bar chart that sums CZ populations by division, but this time **rotate the chart so your categorical data is on the Y axis**. You can use the `coord_flip()` function to add a new layer to your plot that accomplishes this.
+
+```{r}
+#| label: question-10
+#| echo: true
+#| include: true
+
+
+
+```
+
+# Submit homework
+
+In order to get credit for this assignment, you must render the document to PDF and upload it to Gradescope.
+
+1.  The Render button at the top of this document has two options: HTML and PDF. First, attempt the "Render PDF" option. This should produce a document you can upload straight to Gradescope.
+2.  If the "Render PDF" option does not work, select "Render HTML" instead. You can then use the "Open in browser" option to open the HTML document in your web browser, and from there you can use your browser's built-in print commands to print the document into a PDF.
+3.  Save the PDF file to your machine.
+4.  Open Gradescope, find the homework assignment, and upload your work.
