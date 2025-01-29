@@ -1,0 +1,425 @@
+---
+title: Lab 1
+subtitle: CSC 110
+assignment: true
+categories: Lab
+author:
+  - Pete Benbow
+  - Stephen Curry
+date: 2024-12-10
+date-format: long
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    fig-width: 8
+    fig-height: 4
+  pdf:
+    toc: true
+    toc-depth: 1
+    fig-width: 8
+    fig-height: 5
+    geometry:
+      - top=20mm
+      - left=20mm
+      - right=20mm
+      - heightrounded
+---
+
+\newpage
+
+# Instructions
+
+Welcome to CSC 110 Lab 1! In this lab, you will visualize data on economic mobility in the U.S. from [Opportunity Insights](https://opportunityinsights.org/){target="_blank"} using the ggplot2 package.
+
+This is a **pair programming** assignment: one student acts as the **driver**, the other as the 
+**navigator**. The driver writes code while the navigator directs them on what to write based on the 
+assignment instructions, and provides feedback and help as needed. You should rotate these roles 
+roughly every 15 minutes so each person gets plenty of time in the "driver's seat."
+
+Lab assignments can be taken **open-book** using the R4DS textbook and **open-note** 
+using the notes you've taken and the materials we have covered in class. 
+You should not rely on any other outside resources. Usage of generative AI 
+tools like ChatGPT, Claude, or DeepSeek is not allowed on this assignment.
+
+-   Run the chunk of code that creates the `chetty_top100` data frame (below)
+-   Write R code in each code chunk to load, transform, and plot your data.
+-   To earn full credit on coding questions, your code and its output must both be visible.
+-   If a coding question produces a plot/figure:
+    -   Include clear and descriptive labels (title, axis, etc.)
+    -   Include the `label` and `fig-cap` options at the top of each code block
+-   Written (non-code) answers to questions should be typed out in the answer boxes that are provided for you. Do not replace the heading in each answer box, but instead type your responses below each heading.
+-   I recommend you save and render your Quarto doc as an HTML document regularly. This not only has the benefit of showing your output, but it also tests your code to make sure everything is working. Any errors that the rendering engine encounters will be displayed in the RStudio console.
+-   **Remember:** all work is done under the Honor Code, and you must pledge your work at the end of the assignment.
+-   When finished, render your Quarto doc as a PDF, review it carefully for completeness and cleanliness, and submit it in Gradescope. Your Qmd file will stay stored in JupyterHub if we need to refer back to it.
+
+\newpage
+
+# Setup
+
+First, run the code block below to load the necessary packages.
+
+```{r}
+#| label: load-packages
+#| message: false
+
+library(tidyverse)
+library(readxl)
+```
+
+Next, load the Chetty data from Excel into a data frame named "chetty." Then filter the results from chetty based on the 100 largest CZs, and load that output into a new data frame named "chetty_top100." You will work with chetty_top100 throughout this lab.
+
+::: callout-note
+This portion is completed ahead of time for you, but you should still compare what I wrote 
+above with the code below and see if you can piece together how it functions. Note the pipe 
+operator (`|>`) that we will learn about soon, which can be used to string together multiple 
+sequential data operations.
+:::
+
+::: callout-warning
+This part does not count for any points on the assignment, but it's very important to get it correct because it will affect everything you do downstream, so be careful!
+:::
+
+```{r}
+#| label: load-data
+#| message: false
+
+chetty <- read_excel("data/Lab1_Chetty_2014.xlsx", skip=1)
+
+# filter for top 100 commuting zones
+chetty_top100 <- chetty %>%
+  filter(top_100==1)
+
+# remove the larger data set with all commuting zones from the work space
+rm(chetty)
+```
+
+\newpage
+
+# Part 1: Economic Mobility & Household Income Across Commuting Zones
+
+In Part 1, you will explore the relationship between economic mobility and a CZ characteristic not mentioned in the Executive Summary: household income per capita (`hhi_percap`). The mobility measure that you will use in this analysis captures the probability that a child born to a parent in quintile 1 moves to income quintile 5 as an adult (`prob_q1q5`).
+
+\newpage
+
+## Exercise 1
+
+### Exercise 1.1
+
+Make a scatterplot with household income per capita on the x-axis, and mobility on the y-axis.
+
+```{r}
+#| label: fig1.1
+#| fig-cap: "Plot 1.1"
+#| warning: false
+
+```
+
+\newpage
+
+### Exercise 1.2
+
+Describe the chart: what is the range of the x-axis? What is the range of the y-axis? Do you think there is a relationship between these two variables? Why or why not?
+
+::: {.callout-note title="Answer to 1.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Exercise 2
+
+### Exercise 2.1
+
+Use color to represent the geographic region (region) to your scatterplot.
+
+```{r}
+#| label: fig2.1
+#| fig-cap: "Plot 2.1"
+#| warning: false
+
+```
+
+\newpage
+
+### Exercise 2.2
+
+What patterns does this reveal? Describe the distribution of the data, by region.
+
+::: {.callout-note title="Answer to 2.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+### Exercise 2.3
+
+Which region(s) appears to have the most CZs with mobility\>10%?
+
+::: {.callout-note title="Answer to 2.3" appearance="minimal"}
+(replace this with your answer)
+:::
+
+### Exercise 2.4
+
+Which region(s) appears to have the most CZs with mobility\<5%?\
+
+::: {.callout-note title="Answer to 2.4" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Exercise 3
+
+### Exercise 3.1
+
+Represent geographic region on your scatterplot using shape instead of color.
+
+```{r}
+#| label: fig3.1
+#| fig-cap: "Plot 3.1"
+#| warning: false
+
+```
+
+### Exercise 3.2
+
+Compare the use of color vs shape to represent the region: what are the benefits and drawbacks of each?\
+
+::: {.callout-note title="Answer to 3.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Exercise 4
+
+### Exercise 4.1
+
+Going back to the chart you made in 2.1, which uses color to represent the region, add another aesthetic to represent the size of the population using the `pop_2000` variable (population from the 2000 Census).
+
+```{r}
+#| label: fig4.1
+#| warning: false
+#| fig-cap: Plot 4.1
+
+```
+
+### Exercise 4.2
+
+Describe any relationships between size and region.
+
+::: {.callout-note title="Answer to 4.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Exercise 5
+
+### Exercise 5.1
+
+Split your plot into facets to display scatterplots of your data by census region.
+
+```{r}
+#| label: fig5.1
+#| fig-cap: "Plot 5.1"
+#| warning: false
+
+```
+
+### Exercise 5.2
+
+Compare this split plot to the combined plot from #3. Are there aspects of the relationship between `hhi_percap` and mobility that are easier to detect in the faceted plot than in the combined plot?
+
+::: {.callout-note title="Answer to 5.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+### Exercise 5.3
+
+Which regions appear to have a relatively stronger relationship between `hhi_percap` and mobility?
+
+::: {.callout-note title="Answer to 5.3" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Exercise 6
+
+### Exercise 6.1
+
+Add information on the census division to your chart using the color aesthetic.
+
+```{r}
+#| label: fig6.1
+#| fig-cap: "Plot 6.1"
+#| warning: false
+
+```
+
+### Exercise 6.2
+
+What does this reveal about divisional differences in the West?
+
+::: {.callout-note title="Answer to 6.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Exercise 7
+
+### Exercise 7.1
+
+Create a plot of the relationship between `hhi_percap` and mobility with two layers: (1) A scatterplot colored by region, and (2) a smooth fit chart with no standard error also colored by region.
+
+```{r}
+#| label: fig7.1
+#| fig-cap: "Plot 7.1"
+#| warning: false
+
+```
+
+### Exercise 7.2
+
+What patterns does this illustrate in the data? Be specific!
+
+::: {.callout-note title="Answer to 7.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+# Part 2: Working with Bar Charts
+
+## Exercise 8
+
+### Exercise 8.1
+
+Create a bar chart that displays the **count** (not proportion) of CZs by census region and fill each bar using information on census division.
+
+```{r}
+#| label: fig8.1
+#| fig-cap: "Plot 8.1"
+#| warning: false
+
+```
+
+### Exercise 8.2
+
+What do you learn from this chart?
+
+::: {.callout-note title="Answer to 8.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+### Exercise 8.3
+
+Recreate the same bar chart, but this time use position "dodge"
+
+```{r}
+#| label: fig8.3.1
+#| fig-cap: "Plot 8.3.1 - dodge position"
+#| warning: false
+
+```
+
+### Exercise 8.4
+
+Recreate the same bar chart, but this time use position "fill"
+
+```{r}
+#| label: fig8.3.2
+#| fig-cap: "Plot 8.3.2 - fill position"
+#| warning: false
+
+```
+
+### Exercise 8.5
+
+What are the relative advantages and disadvantages of each of the three bar charts when trying to visualize this information?
+
+::: {.callout-note title="Answer to 8.4" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+# Part 3: Answering your own research question
+
+In this final part, you will use the Chetty dataset to devise your own research question and analyze it through the use of scatterplots. You may reuse the `prob_q1q5` variable for economic mobility, but your second axis variable should be a CZ characteristic you have **not** yet explored (something other than `hhi_percap`, `social_capital` and `gini`).
+
+Guidelines:
+
+-   No bar charts here; just stick to scatterplots, but feel free to use whatever aesthetics and additional geoms/layers you think will aid in your analysis.
+-   Feel free to experiment and iterate! If your first choice of variable didn't illuminate anything interesting, try something else. Explore the Chetty dataset and try to find something that resonates with you.
+-   All of your plots and their aesthetics must be labeled appropriately, including title, X axis, and Y axis.
+-   Don't forget to include the `label` and `fig-cap` Number your figures appropriately as well using the evaluation options at the top of each code chunk.
+
+\newpage
+
+## Exercise 9
+
+### Exercise 9.1
+
+What Chetty variable(s) did you choose to research? Explain the rationale for your choices and what question(s) you are trying to answer.
+
+::: {.callout-note title="Answer to 9.1" appearance="minimal"}
+(replace this with your answer)
+:::
+
+### Exercise 9.2
+
+Make a scatterplot of your variables with appropriate aesthetics and labeling.
+
+```{r}
+
+```
+
+### Exercise 9.3
+
+Describe the chart: what is the range of the x-axis? What is the range of the y-axis? Do you think there is a relationship between these two variables? Why or why not?
+
+::: {.callout-note title="Answer to 9.3" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+# Honor Code Pledge
+
+On my honor I have neither given nor received unauthorized information regarding this work, I have followed and will continue to observe all regulations regarding it, and I am unaware of any violation of the Honor Code by others.
+
+::: {.callout-note title="Honor Code Pledge" appearance="minimal"}
+(replace this with your full name to pledge this assignment)
+:::
+
+# Submission checklist
+
+Before submitting your assignment in Gradescope, review this checklist carefully to ensure you have done everything appropriately.
+
+-   Correct authors and date
+-   All code is clearly visible
+-   All output is clearly visible (does not apply to the Setup section), including labels and legends
+-   Written responses are typed into the appropriate answer boxes
+-   All empty or redundant plots are removed
+-   Honor Code pledge is signed
+
+Point penalties will be assessed if your assignment does not meet these guidelines.
+
+\newpage
+
+# Grading
+
+### Data viz questions
+
+-   1 point = Code and output are both clearly and completely visible
+-   1 point = Correct geom is used
+-   1 point = Correct aesthetics are applied
+-   1 point = Descriptive labels are applied
+
+### Short answer questions
+
+-   1 point = Answers the question thoughtfully
+-   1 point = Provides clear expository writing
