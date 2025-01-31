@@ -1,0 +1,223 @@
+---
+title: "Class 04: Bar charts & proportional ink"
+subtitle: "In-class exercise"
+date: "Jan 30, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+---
+
+# Goals for this exercise
+
+-   Examine the usage of bar charts and column charts in visualizing categorical data
+-   Try to recreate some of W.E.B. DuBois's data visualizations from the 19th Century
+
+::: callout-note
+For this exercise, we will ignore data labels and just focus on the geoms themselves.
+:::
+
+# Setup
+
+This time, our setup block not only loads the packages we need, but it also uses the `tribble()` function to create a data frame from static values that we can type in.
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+
+# Make a data frame for the occupation visualization
+occup <- tribble(
+  ~sector         , ~race   , ~pct ,
+  "Agriculture"   , "black" , 62   ,
+  "Agriculture"   , "white" , 64   ,
+  "Domestic"      , "black" , 28   ,
+  "Domestic"      , "white" , 5.5  ,
+  "Manufacturing" , "black" , 5    ,
+  "Manufacturing" , "white" , 13.5 ,
+  "Trade/Trans"   , "black" , 4.5  ,
+  "Trade/Trans"   , "white" , 13   ,
+  "Professions"   , "black" , 0.5  ,
+  "Professions"   , "white" , 4
+)
+```
+
+Note how `tribble()` works: you begin by defining each column name with a tilde (\~) character in front of its name, then you begin adding the row values you want to insert. Text values are added between quotation marks, while numerical and boolean values are written plainly.
+
+# Exercise with `geom_col`
+
+The first bar-style chart we will learn is the column chart, which puts a categorical variable on the X axis and a numeric variable on the Y axis.
+
+## Step 1
+
+Let's begin the process of trying to recreate W.E.B. DuBois's visual by first building a basic column chart with `geom_col()`. Put the `sector` variable on the X axis and the `pct` variable on the Y axis.
+
+```{r}
+
+```
+
+### Question 1
+
+What issues do we notice here?
+
+::: {.callout-note title="Answer to Question 1" appearance="minimal"}
+:::
+
+## Step 2
+
+To improve upon our last plot, let's segment the data by racial categories using our `fill` aesthetic.
+
+```{r}
+
+```
+
+### Question 2
+
+What differences do we notice compared to our last attempt?
+
+::: {.callout-note title="Answer to Question 2" appearance="minimal"}
+:::
+
+## Step 3
+
+To keep making incremental improvements, let's now try using the `position` aesthetic to change how `geom_col()` renders its bars. This argument needs to be called inside `geom_col()`, but **outside** the mapping argument.
+
+There are multiple position adjustments we can use inside `geom_col()`:
+
+-   `dodge`: pushes overlapping objects away from each other, but requires a `group` variable
+-   `stack`: true to its name, stacks different categories on top of each other
+-   `fill`: similar to `stack`, but all stacks end up with the same height, making it useful for visualizing **proportions**
+
+Experiment with adding `position = "fill"` and see what results from that change.
+
+```{r}
+
+```
+
+### Question 3
+
+Why is this visual problematic?
+
+::: {.callout-note title="Answer to Question 3" appearance="minimal"}
+:::
+
+## Step 4
+
+Try the same chart as above, but this time use `position = "dodge"`.
+
+```{r}
+
+```
+
+### Question 4
+
+Why is this visual more informative than the last one?
+
+::: {.callout-note title="Answer to Question 4" appearance="minimal"}
+:::
+
+## Step 5
+
+Let's try a few more variations with `geom_col()`. First, create a column chart that puts `race` on the X axis, keeps `pct` on the Y axis, and puts `sector` in the `fill` aesthetic. Then apply the `dodge` position.
+
+```{r}
+
+```
+
+### Question 5
+
+Why is this visual more informative than the last one?
+
+::: {.callout-note title="Answer to Question 5" appearance="minimal"}
+:::
+
+## Step 6
+
+Next, copy the same visual but use `position = "fill"`:
+
+```{r}
+
+```
+
+### Question 6
+
+Why are these visuals arguably informative than the last ones?
+
+::: {.callout-note title="Answer to Question 6" appearance="minimal"}
+:::
+
+# Exercise with `geom_bar`
+
+Bar charts and column charts are often referred to interchangeably, but in the world of R and the tidyverse, they are not so interchangeable, and you should work to understand the differences in how they visual data.
+
+## Step 7
+
+By default, `geom_bar()` makes the height of the bar proportional to the number of observations in each group. In other words, it's counting rows in our data frame.
+
+To see why this is problem, run this first chunk and look at the output:
+
+```{r}
+
+```
+
+### Question 7
+
+Why is this chart not helpful?
+
+::: {.callout-note title="Answer to Question 7" appearance="minimal"}
+:::
+
+## Step 8
+
+If you are using `geom_bar()`, you can apply the `weight` aesthetic to override the geom's default behavior and force it to use the sum of whatever variable you assign to the weight.
+
+Let's try adding the `pct` variable to the `weight` aesthetic in `geom_bar()` and see what happens:
+
+```{r}
+
+```
+
+Looks familiar, doesn't it? Even though we're using a different geom this time, this is an exact recreation of the `geom_col()` chart from Step 1 above. That means we're back to summing two percentages that were never meant to be summed.
+
+## Step 9
+
+Now let's use our `position` aesthetics to rearrange our data with `dodge` and see how this changes things.
+
+```{r}
+
+```
+
+### Question 9
+
+Why does this look familiar? What's wrong with it?
+
+::: {.callout-note title="Answer to Question 9" appearance="minimal"}
+:::
+
+## Step 10
+
+Once again, to fix these issues, it's a matter of moving our `race` variable over to the X axis.
+
+```{r}
+#1
+
+
+#2
+
+```
+
+### Question 10
+
+Of these last two visuals, which probably gets us closest to the pie wedge infographic written by W.E.B. DuBois?
+
+::: {.callout-note title="Answer to Question 10" appearance="minimal"}
+:::
