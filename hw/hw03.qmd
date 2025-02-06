@@ -1,0 +1,211 @@
+---
+title: "Homework 04"
+subtitle: "CSC 110 - Data Science & Society"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+assignment: true
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    fig-width: 8
+    fig-height: 4
+    code-link: true
+  pdf:
+    toc: true
+    toc-depth: 1
+    fig-width: 8
+    fig-height: 5
+    geometry:
+      - top=20mm
+      - left=20mm
+      - right=20mm
+      - heightrounded
+---
+
+# Intro
+
+This assignment is all about transforming data with these `dplyr` functions:
+
+-   `select()`
+-   `filter()`
+-   `arrange()`
+-   `mutate()`
+
+You'll use these functions to construct data pipelines and answer questions about some global economic indicators that I have loaded into this tutorial using the [WDI](https://github.com/vincentarelbundock/WDI){target="_blank"} package. This data comes to us from the World Bank's [DataBank](https://databank.worldbank.org/){target="_blank"}, an online repository of information collected from around the globe which is open and free, and accessible via their website, direct API calls, and R/Python packages.
+
+::: callout-note
+For this exercise, you do not need to worry about adding labels. Instead, focus your learning on the aesthetics needed to create these visualizations.
+:::
+
+Also, you may use either the base R pipes (`|>`) or the magrittr pipes (`%>%`) depending on your preference, because this tutorial should read both as correct.
+
+Happy coding!
+
+Prof.B
+
+# Setup
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+#| message: false
+
+library(tidyverse)
+
+wdi <- read_csv("data/worldbank.csv")
+```
+
+# Exercises
+
+## Part 1: filter, select, arrange
+
+### Exercise 1
+
+Using the `filter()` function, write a pipeline that retrieves all countries located in the Sub-Saharan Africa region. Do **not** create a new data frame in your answer, but instead just use pipes to build a pipeline, and use parentheses around your code like you learned in class to see the results.
+
+```{r}
+#| label: Q1
+
+
+```
+
+### Exercise 2
+
+Write a pipeline that returns all countries located in the South Asian region with populations of at least 50 million people.
+
+```{r}
+#| label: Q2
+
+
+```
+
+### Exercise 3
+
+Write a pipeline that returns all countries located in North America **or** have a population of less than 20,000 people.
+
+```{r}
+#| label: Q3
+
+
+```
+
+### Exercise 4
+
+Write a pipeline that returns all countries with a population of at least 100 million people, **or** all countries in the East Asia & Pacific region with a population less than 100,000 people, and sort the results by population in descending order.
+
+::: callout-note
+If you have problems getting the right output for this question, consider using parentheses to logically group some of your filter criteria together. Read the question carefully to ascertain what it's really asking you to do, then add a little strategic placement of parentheses within your `filter()` function, and you will probably get the right answer!
+:::
+
+```{r}
+#| label: Q4
+
+
+```
+
+### Exercise 5
+
+Combine the `filter()` function with the `is.na()` function to find a list of all countries who are missing values for any of the following variables: capital, longitude, and latitude. Use the `select()` function to return only the country name, population, and the three variables we just mentioned. Arrange the results by country name in ascending order.
+
+::: callout-note
+There are more efficient ways to handle this question using other R functions like `apply()`, but here I want to reinforce the usage of the logical operators we're learning in this course (`&` and `|`).
+:::
+
+```{r}
+#| label: Q5
+
+
+```
+
+### Exercise 6
+
+Using `distinct()`, return a list of only distinct regions arranged alphabetically.
+
+```{r}
+#| label: Q6
+
+
+```
+
+### Exercise 7
+
+Return a list of all countries in Europe & Central Asia, but only their names, capital, latitude, and longitude.
+
+For this one, I want you to practice **consecutive range selection** using the colon (`:`) character. Don't use a comma-separated list like we did on Exercise 5 a moment ago. (Check [R4DS](https://r4ds.hadley.nz/data-transform.html#sec-select){target="_blank"} if you need help)
+
+```{r}
+#| label: Q7
+
+
+```
+
+### Exercise 8
+
+Return a list of all countries in the North America and Latin America & Caribbean regions, and do so using the `%in%` operator. Note, you may also need to use the `c()` function to create a list for this exercise!
+
+In your `select()` function, use **negative selection** with the `!` operator to omit all columns between iso2c and lastupdated. Sort the results by region in descending order, and country name in ascending order.
+
+```{r}
+#| label: Q8
+
+
+```
+
+### Exercise 9
+
+Return a list of all countries in South Asia. Return only each country's name, and use the `starts_with()` function to return their ISO2C/ISO3C codes. Sort your results by country name.
+
+```{r}
+#| label: Q9
+
+
+```
+
+### Exercise 10
+
+We can use the `grepl()` function, which is part of base R, to perform pattern matching when filtering.
+
+With that in mind, return a list of countries and their lat/long coordinates whose names includes the word "Island." Also, limit your selection to only those rows that have valid lat/long coordinates using the `is.na()` function. To spice it up a tad, I want you to use the `ends_with()` function to select the lat/long variables. Sort your output in ascending order by country name.
+
+Remember to consider placement of parentheses in your filtering, as well as whether you may need to employ some negative filtering.
+
+```{r}
+#| label: Q10
+
+
+```
+
+### Exercise 11
+
+Use the `mutate()` function to create a new column named `pop_density` that calculates the population density of each country. In your results, return only the country, population, and area variables alongside your new variable. Lastly, arrange your output by your new variable in descending order.
+
+```{r}
+#| label: Q11
+
+
+```
+
+### Exercise 12
+
+Riffing on our last exercise, use the same code as before, but add an additional mutation that identifies countries with a high population density. To do so, create a new variable named `high_pop_density` that returns TRUE whenever the `pop_density` variable is at least 1,000 people per square kilometer, then filter on that variable so your results only return countries that are identified as having a high population density. Keep the results sorted by `pop_density` in descending order, and return the same columns as in the last exercise.
+
+The goal here is to demonstrate how to perform a sequence of mutations, and then use the output of those mutations to perform filtering operations to narrow down your dataset. In this case, we should produce a table that shows only the countries that we deem to be the most densely populated in the world, based on our arbitrary threshold of 1,000 residents per square kilometer.
+
+```{r}
+#| label: Q12
+
+
+```
+
+# Submit homework
+
+In order to get credit for this assignment, you must render the document to PDF and upload it to Gradescope.
+
+1.  The Render button at the top of this document has two options: HTML and PDF. First, attempt the "Render PDF" option. This should produce a document you can upload straight to Gradescope.
+2.  If the "Render PDF" option does not work, select "Render HTML" instead. You can then use the "Open in browser" option to open the HTML document in your web browser, and from there you can use your browser's built-in print commands to print the document into a PDF.
+3.  Save the PDF file to your machine.
+4.  Open Gradescope, find the homework assignment, and upload your work.
