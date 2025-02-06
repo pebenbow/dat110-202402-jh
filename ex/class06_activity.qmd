@@ -1,0 +1,161 @@
+---
+title: "Class 06: dplyr mutate"
+subtitle: "In-class exercise"
+date: "Feb 06, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+---
+
+::: callout-important
+These are suggested answers. This document should be used as reference only, it's not designed to be an exhaustive key.
+:::
+
+# Goals for this exercise
+
+-   Learn how to use the `mutate()` function in `dplyr` to calculate new variables for our data that we can use for ranking, filtering, and other operations.
+
+::: callout-note
+This activity focuses on data wrangling rather than visualization, so we will ignore data labels this time.
+:::
+
+# Setup
+
+You know the drill: load the packages!
+
+```{r setup, include=FALSE}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+```
+
+Now read in the Chetty data:
+
+```{r}
+#| label: load-data
+#| echo: true
+#| include: true
+#| warning: false
+
+chetty <- read_excel("data/Lab1_Chetty_2014.xlsx", skip = 1)
+```
+
+Lastly, create a subset of `chetty` by creating a new data frame consisting of only the variables we need for our analysis:
+
+```{r}
+#| label: load-subset
+#| echo: true
+#| include: true
+#| warning: false
+
+chty <- chetty |>
+  select(
+    cz_name, 
+    state, 
+    pop_2000, 
+    abs_mobility, 
+    prob_q1q5,
+    starts_with("frac"),
+    hhi_percap,
+    urban, 
+    region
+    )
+```
+
+# Exercise 1
+
+## Step 1
+
+Make new variables for each of these quantities:
+
+-   `rel_pop` = the number of people in each CZ who consider themselves to be religious
+-   `log2income` = the log base 2 of the per capita household income (you can use the built-in `log2()` function for this)
+-   `not_black` = the proportion of people who are **not** Black/African American
+
+Then use `select()` to only include the CZ name, state, and the three new variables you just created.
+
+```{r}
+
+```
+
+## Step 2
+
+It's not always necessary to save transformed data as a new data frame, especially when you're still experimenting and you're not sure you have the output you need. However, once you have confirmed your code works and gives you the right output, you can overwrite the original subset data frame using the assignment operator, like so: `df <- df |> blah blah blah...`
+
+Remember: to see the results, you can wrap the whole statement inside parentheses.
+
+```{r}
+
+```
+
+::: callout-important
+Note how we overwrote our data frame, but `mutate()` allowed us to simply tack on the new variables
+:::
+
+# Exercise 2
+
+## Step 3
+
+Make new variables that indicate which percentile and which quintile the per capita household income is in among all CZs:
+
+-   `ptile_hhipercap`: use the `percent_rank()` function here.
+-   `qtile_hhipercap`: use the `ntile()` function here, with the second argument being used to specify that we are looking for quintiles (5).
+
+Note: we can use the `everything()` function to make sure we include all of our original variables in our output.
+
+```{r}
+
+```
+
+## Step 4
+
+Create a new logical/boolean variable that indicates whether a CZ is ranked in the top 50 commuting zones by population. You can use the `min_rank()` function here with the `pop_2000` variable to accomplish this.
+
+```{r}
+
+```
+
+## Step 5
+
+OK, let's try something more complicated that demonstrates how we can chain these transformations together. Make a data frame named `worst_mobility` containing:
+
+-   The 41st to 50th worst absolute mobility scores;
+-   among the 50 biggest CZs;
+-   sorted in that order; and
+-   displaying only the rank, CZ name, absolute mobility, and population
+
+```{r}
+
+```
+
+## Step 6
+
+Lastly, add a variable to the data frame you made in Step 5 that tracks the **running total** of people in these bottom 10 of the 50 largest CZs.
+
+::: callout-hint
+Running totals can be calculated usign the `cumsum()` function.
+:::
+
+```{r}
+
+```
+
+# Wrap-up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.
