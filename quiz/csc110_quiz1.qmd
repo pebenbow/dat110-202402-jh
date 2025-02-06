@@ -1,0 +1,225 @@
+---
+title: "Quiz 1"
+subtitle: "CSC 110"
+author: "Your name here"
+date: "Feb 06, 2025"
+date-format: long
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    fig-width: 8
+    fig-height: 4
+  pdf:
+    toc: true
+    toc-depth: 1
+    fig-width: 8
+    fig-height: 5
+    geometry:
+      - top=20mm
+      - left=20mm
+      - right=20mm
+      - heightrounded
+---
+
+# Instructions
+
+Welcome to CSC 110 Quiz 1! In this lab, you will plot and analyze inequality and 
+mobility data from Chetty using the ggplot2 package.
+
+Quiz assignments can be taken **open-book** using the R4DS textbook and **open-note** 
+using the notes you've taken and the materials we have covered in class. You may 
+also use the built-in help features in RStudio. Otherwise, You should not rely 
+on any outside resources. Usage of generative AI tools like ChatGPT, Claude, or 
+DeepSeek is not allowed on this assignment.
+
+-   You must work alone on this quiz. You may ask me a clarifying question by 
+email or in office hours, but otherwise you are not to seek outside help on this 
+assignment.
+-   To earn full credit on coding questions, your code and its output must both 
+be visible.
+-   If a coding question produces a plot/figure:
+    -   Include clear and descriptive labels (title, axis, etc.)
+    -   Include the `label` and `fig-cap` options at the top of each code block
+-   Written (non-code) answers to questions should be typed out in the answer 
+boxes that are provided for you, and should be written in complete sentences.
+Do not replace the heading in each answer box, but instead type your responses 
+below each heading.
+-   I recommend you save and render your Quarto doc as an HTML document 
+regularly. This not only has the benefit of showing your output, but it also 
+tests your code to make sure everything is working. Any errors that the 
+rendering engine encounters will be displayed in the RStudio console.
+-   **Remember:** all work is done under the Honor Code, and you must pledge 
+your work at the end of the assignment.
+-   When finished, render your Quarto doc as a PDF, review it carefully for 
+completeness and cleanliness, and submit it in Gradescope. Your Qmd file will 
+stay stored in JupyterHub if we need to refer back to it.
+
+# Setup
+
+Run the block below to load the necessary packages for this quiz.
+
+```{r setup}
+#| label: load-packages
+#| include: true
+#| message: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+```
+
+\newpage
+
+# Questions
+
+## Question 1.1
+
+Write an R statement that creates a data frame named "utip" from the Excel file 
+contained in utip_plus.xlsx. Then use one of the techniques we've learned to 
+preview the data so you can answer the question below.
+
+```{r}
+#| label: "Question 1.1"
+
+
+```
+
+## Question 1.2
+
+How many rows are in this data frame? What does each row represent?
+
+::: {.callout-note title="Answer to 1.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Question 2.1
+
+Use your knowledge of ggplot to produce a scatterplot that shows the relationship 
+between tract-to-tract income inequality (`tract_gini`) and 
+household-to-household income inequality (`hh_gini`), with each point marked by 
+a filled blue square.
+
+```{r}
+#| label: "Question 2.1"
+#| fig-cap: "Plot 2.1 - tract-to-tract inequality vs. household-to-household inequality"
+
+```
+
+## Question 2.2
+
+What does each point represent in the plot?
+
+::: {.callout-note title="Answer to 2.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Question 3.1
+
+Produce a scatterplot that shows the relationship between household-to-household 
+income inequality (`hh_gini`) and absolute mobility (`avg_mob`).
+
+```{r}
+#| label: "Question 3.1"
+#| fig-cap: "Plot 3.1 - household-to-household inequality vs. absolute mobility"
+
+```
+
+## Question 3.2
+
+Do you see any trends? If so, describe them. Are these relationships what you 
+might have expected based on the Chetty study?
+
+::: {.callout-note title="Answer to 3.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Question 4.1
+
+Explore the potential effects of Simpson's Paradox in the relationship shown 
+in Question 3.1 by adding aesthetics and/or faceting on the variables `inctax`
+and `region.`
+
+```{r}
+#| label: "Question 4.1"
+#| fig-cap: "Plot 4.1 - Exploring Simpson's Paradox"
+
+```
+
+## Question 4.2
+
+Describe your findings, and be specific. Do you see evidence of Simpson's Paradox here?
+
+::: {.callout-note title="Answer to 4.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Question 5.1
+
+Produce a bar chart that visualizes the number of states in each region and in 
+each income tax category.
+
+```{r}
+#| label: "Question 5.1"
+#| fig-cap: "Plot 5.1 - States by region and income tax category"
+
+```
+
+## Question 5.2
+
+Explain your choice of x and fill aesthetics, and your choice of position.
+
+::: {.callout-note title="Answer to 5.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+# Honor Code Pledge
+
+On my honor I have neither given nor received unauthorized information regarding this work, I have followed and will continue to observe all regulations regarding it, and I am unaware of any violation of the Honor Code by others.
+
+(Type your full name below to pledge this assignment.)
+
+::: {.callout-note title="Honor Code Pledge" appearance="minimal"}
+(replace this with your full name to pledge this assignment)
+:::
+
+# Submission checklist
+
+Before submitting your assignment in Gradescope, review this checklist carefully 
+to ensure you have done everything appropriately.
+
+-   Correct author and date
+-   All code is clearly visible
+-   All output is clearly visible (does not apply to the Setup section), 
+including labels and legends
+-   Written responses are typed into the appropriate answer boxes
+-   All empty or redundant plots are removed
+-   Honor Code pledge is signed
+
+Point penalties will be assessed if your assignment does not meet these guidelines.
+
+\newpage
+
+# Grading
+
+### Setup question
+
+### Data viz questions
+
+-   1 point = Code and output are both clearly and completely visible
+-   1 point = Correct geom is used
+-   1 point = Correct aesthetics are applied
+-   1 point = Descriptive labels are applied
+
+### Short answer questions
+
+-   1 point = Answers the question thoughtfully
+-   1 point = Provides clear expository writing
