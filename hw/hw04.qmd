@@ -1,0 +1,260 @@
+---
+title: "Homework 04"
+subtitle: "CSC 110 - Data Science & Society"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+assignment: true
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    fig-width: 8
+    fig-height: 4
+  pdf:
+    toc: true
+    toc-depth: 1
+    fig-width: 8
+    fig-height: 5
+    geometry:
+      - top=20mm
+      - left=20mm
+      - right=20mm
+      - heightrounded
+---
+
+# Intro
+
+This assignment is all about bar histograms and boxplots, giving you more 
+opportunities to learn and practice one of the most popular and versatile forms 
+of data visualization.
+
+**Note:** For this exercise, you do not need to worry about adding labels. 
+Instead, focus your learning on the aesthetics needed to create these visualizations.
+
+::: callout-note
+I don't grade the homework for correct answers. I just check to see that you attempted the questions because these assignments are meant to give you valuable practice with techniques that we will use in class activities, labs, and quizzes.
+:::
+
+Happy coding!
+
+Prof.B
+
+# Setup
+
+Run the setup block below to install and load the packages you need. We will be 
+working with a data package called `gapminder`, which provides panel data on 
+life expectancy, GDP per capita, and population for 142 countries from 1952 to 
+2007 in five year intervals.
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+#| message: false
+
+library(tidyverse)
+
+df <- read_delim("data/gapminder.csv", 
+    delim = ",", escape_double = FALSE, trim_ws = TRUE)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+
+# Data preview
+
+As usual, let's start by previewing our data and asking some questions about it. 
+You can use `glimpse(df)`, or just `df`, to get a preview of a tibble.
+
+```{r}
+#| label: preview-data
+#| echo: true
+#| include: true
+
+
+```
+
+# Exercises
+
+## Part 1: geom_histogram exercises
+
+### Question 1
+
+Create a histogram of `lifeExp` to visualize the distribution of life expectancy.
+
+::: callout-tip
+If you need help, check out [R4DS](https://r4ds.hadley.nz/data-visualize.html#a-numerical-variable){target="_blank"}.
+:::
+
+```{r}
+#| label: question-1
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 2
+
+Create a histogram of `gdpPercap` to visualize the distribution of GDP per 
+capita in the year 2007 for countries with a population of at least 10 million 
+that year. Make sure to use an appropriate binwidth for the historgram.
+
+```{r}
+#| label: question-2
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 3
+
+In the R4DS reading for Class 03, [Section 9.4, Facets](https://r4ds.hadley.nz/layers.html#facets){target="_blank"}, you learn about how facets allow you to split data into multiple panels based on a categorical variable.
+
+Now create faceted histograms of `lifeExp` for each continent in the year 2002. 
+Use different colors for each continent and make sure to use an appropriate 
+binwidth for the histogram
+
+```{r}
+#| label: question-3
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 4
+
+Use `group_by()` and `summarize()` to calculate the mean GDP per capita for each 
+country. Then create a histogram to visualize the distribution of mean GDP per 
+capita values. Make sure to use an appropriate binwidth for the histogram.
+
+::: callout-tip
+For this section, check out [Section 3.5.1 & 3.5.2 of R4DS](https://r4ds.hadley.nz/data-transform#groups){target="_blank"} to learn more about how `group_by()` and `summarize()` work together to aggregate data.
+
+**Also**, the `mean()` function has an argument (`na.rm`) you can use to remove 
+NA values automatically so they don't interfere with your aggregations.
+:::
+
+```{r}
+#| label: question-4
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 5
+
+Building on **Question 4**, modify the histogram to include a dotted vertical 
+line representing the median GDP per capita across all countries. First, compute 
+the median of the mean GDP per capita values. Then use `geom_vline()` to add a 
+dotted vertical line at the median. Refer to the documentation for `geom_vline()` 
+(https://ggplot2.tidyverse.org/reference/geom_abline.html){target="\_blank"}
+
+```{r}
+#| label: question-5
+#| echo: true
+#| include: true
+
+
+```
+
+## Part 2: geom_boxplot exercises
+
+### Question 6
+
+Create a boxplot of `lifeExp` grouped by `continent`.
+
+```{r}
+#| label: question-6
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 7
+
+`geom_boxplot()` has a helper argument you can use to color outlier values in a 
+different color to make them easier to notice. Use the command `?geom_boxplot` in 
+your console to find this argument in the Help screen, then update your boxplot 
+from the previous question to highlight the outliers in red.
+
+```{r}
+#| label: question-7
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 8
+
+To make the trend easier to see, we can reorder the continents based on the 
+median value of life expectancy before creating the boxplot. Modify the 
+code from **Question 7**.
+
+::: callout-tip
+For this section, check out [Section 10.5 of R4DS](https://r4ds.hadley.nz/eda#covariation){target="_blank"} to learn more about how `fct_reorder()` can be used to reorder factor levels based on a summary statistic, helping to reveal patterns in your data more clearly.
+:::
+
+```{r}
+#| label: question-8
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 9
+
+Building on the previous question, we can improve the readability of boxplots 
+when dealing with long variable names by flipping the x and y aesthetics. Modify 
+the code from **Question 8** so that the boxplot is displayed horizontally 
+instead of vertically.
+
+::: callout-tip
+Instead of exchanging the x and y variables, you can add `coord_flip()` as a new layer to the vertical boxplot to create a horizontal one. Refer to
+:::
+
+```{r}
+#| label: question-9
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 10
+
+Lastly, to better visualize the distribution of life expectancy within each 
+continent, add `geom_jitter()` to the boxplot from **Question 9**. Ensure that 
+the points are slightly spread out to reduce overlap and set an appropriate 
+alpha value to make overlapping points more transparent.
+
+::: callout-tip
+Remember, when learning an unfamiliar function like `geom_jitter()`, you can use 
+RStudio's built-in help to learn more about what the function does. Simply run 
+`?geom_jitter` in your console to see the documentation in your Help window.
+:::
+
+```{r}
+#| label: question-10
+#| echo: true
+#| include: true
+
+
+```
+
+# Submit homework
+
+In order to get credit for this assignment, you must render the document to PDF and upload it to Gradescope.
+
+1.  The Render button at the top of this document has two options: HTML and PDF. First, attempt the "Render PDF" option. This should produce a document you can upload straight to Gradescope.
+2.  If the "Render PDF" option does not work, select "Render HTML" instead. You can then use the "Open in browser" option to open the HTML document in your web browser, and from there you can use your browser's built-in print commands to print the document into a PDF.
+3.  Save the PDF file to your machine.
+4.  Open Gradescope, find the homework assignment, and upload your work.
