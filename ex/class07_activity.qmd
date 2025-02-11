@@ -1,0 +1,255 @@
+---
+title: "Class 07: Examining variation with histograms"
+subtitle: "In-class exercise"
+date: "Feb 11, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+---
+
+::: callout-important
+These are suggested answers. This document should be used as reference only, 
+it's not designed to be an exhaustive key.
+:::
+
+# Goals for this exercise
+
+-   Learn how to use `group_by()` and `summarize()` to aggregate data.
+-   Learn how to use `geom_histogram()` to create histograms showing data 
+distribution
+-   Learn how to tweak histogram bin sizes and boundaries
+-   Learn how to use `case_when()` to transform data conditionally.
+
+::: callout-note
+This activity focuses on data wrangling rather than visualization, so we will 
+ignore data labels this time.
+:::
+
+# Setup
+
+You know the drill: load the packages!
+
+```{r setup, include=FALSE}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+```
+
+And now load the data:
+
+```{r}
+#| label: load-data
+#| echo: true
+#| include: true
+#| warning: false
+
+typ = append(c("numeric", "text", "text"), rep(c("numeric"),38))
+
+chetty <- read_excel(
+  "data/Chetty_Intergenerational Mobility_tables.xls", 
+  sheet     = "Online Data Table 8", 
+  skip      = 6, 
+  col_types = typ
+  ) |>
+  filter(CZ > 0)
+
+# Note that mobility measures are in a different sheet!
+```
+
+# Exercise 1
+
+## Step 1
+
+First, let's cover how to make summary tables with `count()`. Use this technique 
+to display the number of urban and non-urban CZs.
+
+```{r}
+
+```
+
+## Step 2
+
+Now let's use `group_by()` and `summarize()` to explore how to aggregate 
+variables at varying levels.
+
+::: callout-note
+**Pay attention to the backtick character (\`) being used!** This is needed 
+because of the spaces in the variable names.
+:::
+
+```{r}
+
+```
+
+# Exercise 2
+
+## Step 3
+
+Let's start our learning about histograms by examining continuous variables.
+
+Plot the `School Expenditure per Student` variable in a histogram and consider 
+the following questions:
+
+-   What is a good number of bins, or binwidth?
+-   Is there any surprising structure to these data?
+-   Are there any outliers?
+-   What are the non-finite values?
+
+```{r}
+
+```
+
+## Step 4
+
+Let's try using the `binwidth` argument instead of `bins` and see what happens:
+
+```{r}
+
+```
+
+## Step 5
+
+We might be able to see the bins more clearly if we modify the scale of our X 
+axis, so let's try that by using the `scale_x_continuous()` function.
+
+```{r}
+
+```
+
+## Step 6
+
+Notice in our past few plots how we keep getting a warning that states:
+
+```         
+Removed 10 rows containing non-finite outside the scale range (`stat_bin()`)
+```
+
+This is being caused by 10 rows in our data frame that have NA values for 
+the `School Expenditure per Student` variable. We can filter out these NA values 
+by using `filter(!is.na())` as we learned about previously, which will suppress 
+the error message.
+
+```{r}
+
+```
+
+::: callout-important
+NOTE: it is essential to remove chetty from inside ggplot() when you do this. 
+Otherwise it starts over with the original, unfiltered data frame.
+:::
+
+::: callout-note
+-   The above progression of number of bins shows how the histogram gets less 
+jagged, but also starts to lose some of the details, including outliers. By 
+breaking into a large number of bins, we see there is no surprising hidden 
+structure in these data.
+-   There is no "right" answer, but good compromises of not showing too many 
+bars but still clearly seeing outliers is somewhere around 25 bins, but could 
+go as high as 50.
+-   HOWEVER, binwidth is better for this variable, since these are in thousands 
+of dollars (\$K) and the resulting ranges might be easier for people to 
+interpret. In this case, we would also want to line up a bar on an integer value 
+(in this case I chose 6, but the choice is arbitrary).
+:::
+
+## Step 7
+
+Repeat the last exercise using `Teacher Student Ratio`.
+
+```{r}
+
+```
+
+## Step 8
+
+Repeat the last exercise yet again, this time using `High School Dropout Rate (Income Adjusted)`.
+
+```{r}
+
+```
+
+::: callout-note
+-   Again in #3, binwidth is a better choice than number of bins, since a range 
+of ratios is easier to find and interpret on the plot. And better to line them 
+up on integer values.
+-   For Teacher Student Ratio, I would choose binwidth=1, to get integer-width 
+intervals, for each of reading. It is not too jagged and we can still see the 
+outliers fairly well.
+-   A similar exploration with High School Dropout Rate (Income Adjusted) leads 
+to binwidth of 0.01, aligned on 0.
+:::
+
+# Exercise 3
+
+In this series of exercises, we'll explore how to use `mutate()` together with 
+the `case_when()` function to create new categorical variables.
+
+## Step 9
+
+Use `mutate()` and `case_when()` to make a new categorical variable that splits 
+school expenditures into categories of low, medium, high, and very high.
+
+Note that this would allow you to use different colors or facets in a scatter 
+plot or bar graph for the level of school expenditure (try it if you have time!)
+
+```{r}
+
+```
+
+## Step 10
+
+Let's use `filter(!is.na())` once more to get rid of the NA values that are 
+appearing in our `School Expenditure per Student` variable:
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+## Step 11
+
+Notice how our `sch_expend_level` variable is sorting itself in alphabetical 
+order in our legend. We can fix this by introducing you to the `factor()` 
+function, which allows us to manually sort our data.
+
+```{r}
+
+```
+
+Once this done, simply recreate our scatterplot from earlier and notice how our 
+legend is now sorted.
+
+```{r}
+
+```
+
+## Step 12
+
+Now let's use our new variable to segment the expenditure levels by urban areas.
+
+```{r}
+
+```
+
+# Wrap-up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.
