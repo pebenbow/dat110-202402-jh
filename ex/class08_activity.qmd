@@ -1,0 +1,183 @@
+---
+title: "Class 08: Examining covariation"
+subtitle: "In-class exercise"
+date: "Feb 13, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+---
+
+::: callout-important
+These are suggested answers. This document should be used as reference only, it's not designed to be an exhaustive key.
+:::
+
+# Goals for this exercise
+
+-   Learn how to use `geom_boxplot()`, `geom_count()`, and `geom_tile()` to look at covariation when working with varying types of data.
+
+# Setup
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+```
+
+## Background
+
+The provided data on early care and education were painstakingly collected by Scott Latham and collaborators at the Stanford Center for Educational Policy Analysis, in support of a recent publication available [here](https://cepa.stanford.edu/content/effects-accountability-incentives-early-childhood-education){target="_blank"}
+
+You can read more about the QRIS system [here](https://ecquality.acf.hhs.gov/about-qris){target="_blank"}.
+
+Instead of an online code book like we had for the CMS data, we have a note from Professor Latham: "We have a panel of all licensed child care providers in NC from 2007-2014. This includes center based providers and family child care homes. For all providers, we have county identifiers and zip codes. We also know facility types (e.g. independent, Head Start, local public school), enrollment, capacity, and some zip code level demographics (% below pov, % black, % Hispanic). For most providers, we have information about quality as measured by NC’s Quality Rating and Improvement System (QRIS), but most of these indicators aren’t readily interpretable, because they are linked to the QRIS rubric (e.g. we have a measure of teacher/staff education & credentials that goes from 1-7). The one measure of quality that is fairly straightforward to interpret are ERS ratings (widely-used measure of observed classroom quality). These are elective, so we only have for a subset of the providers."
+
+# Prepare the data
+
+First, create a new data frame named "nc" by reading in the data from the Excel file.
+
+```{r}
+nc <- read_excel("data/NC_ECE_2007-2014.xls")
+```
+
+Then use pipes to take our nc data frame and create a new data frame named "meck" that only contains data from Mecklenburg County.
+
+```{r}
+
+```
+
+Stop here and note a few key variables in our data frame: - year - `ftype`: Identifies the type of day-care facility (public, franchise, parochial, etc.) - `zip`: The postal code where the facility resides - `p_pov`: The percentage of residents in the zip code whose income is below the poverty threshold. - `med_income`: The median income (in USD) within the zip code.
+
+::: callout-important
+Note the grain of the data: 1 row per facility PER YEAR. It may become necessary for us to filter the data by year.
+:::
+
+# Exercises
+
+## Part 1
+
+### Step 1
+
+Produce a table of the minimum and maximum values of percent in poverty, percent black, percent Hispanic, and median income **for each zip code** in Mecklenburg County in 2014.
+
+Use `filter()`, `group_by()`, `summarize()`, `min()`, and `max()`. You may also want to use `!is.na()` to filter out NA values.
+
+```{r,echo=TRUE, warning=FALSE}
+# Note the nice headings you get by putting human-readable names in backticks before each statistic (and also in the group_by!) 
+
+```
+
+::: callout-note
+From the above table, we see that min and max values are the same, which is because these variables are zip-code level -- there is no variation among individual facilities within each zipcode.
+:::
+
+### Step 2
+
+We can also use `group_by()` and `summarize()` to get a count of all the child care facilities in Mecklenburg County by facility type. Not only that, we can calculate **percentages** of these facility types within the county by applying a little `mutate()` in our code.
+
+```{r}
+
+```
+
+### Step 2(a)
+
+Furthermore, we can also use some of the other functions we've learned previously to get **top n rankings** based on certain variables. In particular, we'll use `min_rank()` and `head()` to identify our top 5 facility types.
+
+```{r}
+
+```
+
+## Part 2
+
+**Covariation between a categorical and continuous variable**
+
+According to R4DS: "Covariation is the tendency for the values of two or more variables to vary together in a related way. The best way to spot covariation is to visualize the relationship between two or more variables."
+
+[Source](https://r4ds.hadley.nz/eda#covariation){target="_blank"}
+
+### Step 3
+
+**Boxplots** are very well-suited for analyzing covariation when one of your variables is categorical and the other is continuous.
+
+With that in mind, let's create a boxplot to investigate the distribution of capacity by facility type in Mecklenburg county in 2014.
+
+```{r}
+
+```
+
+::: callout-important
+Filtering on year is essential here because each facility is in the dataset multiple times, once for each year.
+:::
+
+### Step 4
+
+To make our boxplot easier to interpret, we can also employ the `fct_reorder()` function within our aesthetics to change the order in which our data is sorted.
+
+With this in mind, recreate the same boxplot from the previous exercise, but sort the facility types in ascending order by their **average capacity**.
+
+```{r}
+
+```
+
+## Part 3
+
+**Covariation between two categorical variables**
+
+When we need to examine covariation across two categorical variables, R4DS has a couple of recommendations for us:
+
+-   `geom_count()`
+-   `geom_tile()`
+
+Let's explore each of these in the steps below.
+
+### Step 5
+
+Let's say we wanted to see the count of QRIS ratings (which are categorical) at each facility type in 2014 in NC. How could you graph this using `geom_count()`?
+
+```{r}
+
+```
+
+### Step 6
+
+We can accomplish something similar using `geom_tile()`, which creates a "heat map" visual that shades a series of squares based on the frequency of the observations it finds.
+
+```{r}
+
+```
+
+## Part 4
+
+**Covariation between two continuous variables**
+
+So far in this course, we've used `geom_point()` many times to create scatterplots, which are among the best ways to analyze covariation when you're dealing with two numerical (continuous) variables.
+
+### Step 7
+
+First, let's show how to use `mutate()` with the `if_else()` function to bucket our facility types into two groups: "Independent" and "Other." Then let's use `group_by()` and `summarize()` to look at the aggregated results of this.
+
+```{r}
+
+```
+
+### Step 8
+
+Now that we've bucketed our facilities into "Independent" and "Other," let's visualize the relationships between QRIS variable(s) in each zip code, the type of facility, and the demographics of that zip code in 2014. There are many possible combinations of variables to consider here. Experiment with a few different ones. Interpret your graphs and discuss any conclusions you can draw.
+
+```{r}
+
+```
+
+# Wrap-up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.
