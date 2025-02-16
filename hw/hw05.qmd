@@ -1,0 +1,249 @@
+---
+title: "Homework 05"
+subtitle: "CSC 110 - Data Science & Society"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+assignment: true
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    fig-width: 8
+    fig-height: 4
+    code-link: true
+---
+
+# Intro
+
+This assignment focuses on Tibbles and Tidying Data using the tidyverse package. You’ll work with the `who2` dataset, which contains tuberculosis (TB) cases broken down by year, country, age, gender, and diagnosis method. The dataset is messy and requires tidying, making it a great opportunity to practice `pivot_longer()` and `pivot_wider()`.
+
+As you work through this homework assignment, you’ll apply the principles of tidy data: each variable is a column, each observation is a row, and each value is a cell. These principles are critical to working effectively with data in R.
+
+**Note:** For this assignment, make sure to add appropriate labels to each data visualization.
+
+::: callout-note
+I don't grade the homework for correct answers. I just check to see that you attempted the questions because these assignments are meant to give you valuable practice with techniques that we will use in class activities, labs, and quizzes.
+:::
+
+Happy coding!
+
+Prof.B
+
+# Setup
+
+Run the setup block below to install and load the packages you need. We will be working with the `who2` dataset from the tidyr package.
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+#| message: false
+
+library(tidyverse)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data preview
+
+Let’s start by previewing the `who2` dataset, which is automatically included in the tidyverse package. You can use `glimpse(who2)` or just `who2` to get a preview of the tibble. Refer to this documentation for more details on the `who2` dataset: [](https://tidyr.tidyverse.org/reference/who.html){target="\_blank"}.
+
+```{r}
+#| label: preview-data
+#| echo: true
+#| include: true
+
+
+```
+
+# Exercises
+
+## Part 1: Tidying Data with pivot_longer()
+
+### Question 1
+
+The `who2` dataset is in a "wide" format, with columns like `sp_m_014`, `sp_m_1524`, etc. These columns represent TB cases for different groups (e.g., gender and age) per country per year.
+
+Use `pivot_longer()` to tidy the dataset so that each row represents a yearly observation of each variable for a given country. Then save this pivoted dataset into a new dataframe called `who_long`. Make sure to filter for `N/A` values in the new pivoted column.
+
+::: callout-tip
+If you need help with `pivot_longer()`, check out [R4DS](https://r4ds.hadley.nz/data-tidy.html#sec-billboard){target="_blank"}. Since the columns we want to pivot start with either "sp", "ep", "sn", or "rel", use `cols = matches()`.
+
+You can find documentation on how to use the `matches()` helper function [here](https://tidyselect.r-lib.org/reference/starts_with.html){target="_blank"}.
+
+The `who_long` data frame you produce should have a grain of **one row per country per year per tuberculosis variable**, and should feature four columns and over 76,000 rows.
+:::
+
+```{r}
+#| label: question-1
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 2
+
+In the pivoted dataset, the new column for the original column names contains information about the diagnosis method, gender, and age group. Use `separate_wider_delim()` to split the remaining parts into three new variables (listed below) based on their delimiter, and store the output as a new data frame named `who_separated`: 
+
+-   `diagnosis`: The first two or three letters (e.g., sn, ep, rel) 
+-   `gender`: The next letter after the first underscore (e.g., m, f). 
+-   `age_group`: The remaining numbers after the second underscore (e.g., 65, 4554)
+
+::: callout-tip
+A **delimiter** is a character that separates data into different values. In the case of our key column here, a series of underscores (_) is used to separate our diagnosis codes from our gender codes and our age group codes.
+
+Refer to the [documentation](https://tidyr.tidyverse.org/reference/separate.html){target="\_blank"} for help with `separate_wider_delim()`.
+:::
+
+::: callout-note
+We have not covered this in class yet, but it's also possible to transform the new `age_group` variable we're attempting to create here so that the groups are more readable. For example, we can transform "014" into "0-14" to reflect its status as the grouping for TB diagnoses for patients between the ages of zero and fourteen.
+
+This can be done through a combination of `str_detect()` and `str_replace()` along with **regular expressions** (also called "regex") to search for certain patterns in our text and replace them with other patterns. This can be a confusing topic, especially for students who have never programmed before, so I won't require it for this homework. However, I will display it in the answer key when this homework is completed.
+:::
+
+```{r}
+#| label: question-2
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 3
+
+Now that the data is tidy, filter the dataset to include only rows where the diagnosis is `sp` (positive pulmonary smear TB cases). Then, summarize the total number of cases by country and year, save the results to a new data frame named `who_summary`, and display the data frame as a tibble.
+
+::: callout-tip
+Use `filter()` and `group_by()` with `summarize()`.
+:::
+
+```{r}
+#| label: question-3
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 4
+
+Using the summarized dataset from the previous question, calculate the average number of TB cases per year for each country. Then, create a bar chart to visualize the top 10 countries with the highest average TB cases. Make sure to add appropriate labels for the axes and a title.
+
+::: callout-tip
+Use `group_by()`, `summarize()`, and `slice_max()` to find the top 10 countries.
+:::
+
+```{r}
+#| label: question-4
+#| echo: true
+#| include: true
+
+
+```
+
+## Part 2: Reshaping Data with pivot_wider()
+
+### Question 5
+
+Using the summarized data frame from **Question 3**, now use `pivot_wider()` to reshape the data so that each row represents a country and each column represents a year, with the values being the total number of TB cases. Store the output as a new data frame named `who_wide`, and display that new data frame as a tibble.
+
+::: callout-tip
+Refer to [Section 12.3 of R4DS](https://r4ds.hadley.nz/data-tidy.html#widening-data){target="_blank"} for help with `pivot_wider()`.
+
+Note: there is an argument in `pivot_wider()` that will allow you to chronologically sort the years in your output. Find this argument and use it to make your output even tidier.
+:::
+
+```{r}
+#| label: question-5
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 6
+
+Using the re-pivoted dataset from the last question, find which country does not have any missing values (NA) for TB cases from the years 1980 to 2013.
+
+::: callout-tip
+There are some cool functions you can use to make this easier. Check out the documentation on `filter_all()` and `all_vars()` 
+:::
+
+```{r}
+#| label: question-6
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 7
+
+Using the pivoted dataset from **Question 5**, calculate the percentage change in TB cases from 1995 to 2000 for each country. Add this to the data frame as a new column called `pct_change`. 
+
+::: callout-tip
+Use `mutate()` to calculate the percentage change: (value_2000 - value_1995) / value_1995 \* 100.
+
+Also, try the `.keep = "used"` argument within `mutate()` to streamline your output!
+:::
+
+```{r}
+#| label: question-7
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 8
+
+Now, using the dataset with percentage change, create a histogram to visualize the distribution of percentage changes in TB cases from 1995 to 2000 (pct_change). 
+
+::: callout-tip
+You'll probably notice a pretty huge outlier when you plot this histogram for the first time. There are multiple ways we can filter out any outliers before we plot, but perhaps the most straightforward way is to control the lower and upper limits of our X axis by adding the `xlim()` function as a new layer in our plot. Give this a try and see what happens.
+:::
+
+```{r}
+#| label: question-8
+#| echo: true
+#| include: true
+#| warning: false
+
+
+```
+
+### Question 9
+
+Another useful technique for visualizing data, as well as filtering it, is to calculate values we can use for these purposes and store them as vectors that we can recall later.
+
+For example, if we want to calculate the mean `pct_change` value for all countries in our `who_pct_change` data frame, we could simply write:
+
+```
+avg_pct_change <- mean(who_pct_change$pct_change)
+```
+
+When run, this line of code will create a vector named "avg_pct_change" that gets stored in your RStudio session. You can see it by looking at the Environment tab.
+
+Furthermore, you can add these constant values to your `ggplot` visuals to add points of reference that can contextualize the data better. For example, suppose we want to add a red vertical line that displays the median value of `pct_change` for all of our countries. We can do so by adding `geom_vline()` as an additional layer in our plot with the `xintercept` aesthetic. (Note: there is also a `geom_hline()` function that can do the same for our Y axis.)
+
+I want you to give this a try on the next question: calculate the **median** of the `pct_change` variable for all countries, and display it on your histogram from the previous question as a vertical dashed line using `geom_vline()`. 
+
+```{r}
+#| label: question-9
+#| echo: true
+#| include: true
+#| warning: false
+
+
+```
+
+# Submit homework
+
+In order to get credit for this assignment, you must render the document to PDF and upload it to Gradescope.
+
+1.  Use the command line technique shown in the video on the Course FAQ page to run `quarto render` and produce this document as a PDF file.
+2.  Save the PDF file to your machine.
+3.  Open Gradescope, find the homework assignment, and upload your work.
