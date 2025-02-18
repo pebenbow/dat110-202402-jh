@@ -1,0 +1,196 @@
+---
+title: "Class 09: Data conversion"
+subtitle: "In-class exercise"
+date: "Feb 18, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+---
+
+::: callout-important
+These are suggested answers. This document should be used as reference only, it's not designed to be an exhaustive key.
+:::
+
+# Goals for this exercise
+
+-   Learn how to identify the data types contained within a dataset
+-   Learn how to convert variables from one data type to another
+
+::: callout-note
+This activity focuses on data wrangling rather than visualization, so we will ignore data labels this time.
+:::
+
+# Setup
+
+You know the drill: load the packages!
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: false
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readr)
+```
+
+And now load the data. In this example, we're using the `data.frame()` function to create a handful of "dummy" variables that we can use to illustrate different data types and the methods we have for converting them.
+
+```{r}
+#| label: load-data
+#| echo: true
+#| include: true
+#| warning: false
+
+df <- data.frame(
+  intrs = c(1L          , 2L          , 3L), 
+  dubls = c(5.00        , 6.55        , 7.3333333),
+  chars = factor(c("Hello!"    , "This is"   , "some data")),
+  dates = c("2020-01-01", "2020-02-20", "2020-03-07")
+)
+```
+
+::: callout-note
+Make note of the notation for integers in this example above: each one has an "L" suffix. This is a shorthand notation that explicitly tells R to interpret those values as integers. If we did not include the L, R would interpret these not as integers, but as **real numbers** (also called "doubles").
+:::
+
+# Exercise 1
+
+## Part 1
+
+### Step 1
+
+First, we're going to use the `str()` function to interrogate our dummy data and determine the data types.
+
+::: callout-tip
+The `str()` function is an incredibly useful function when you need to examine an unfamiliar data frame for the first time. Its output is very similar to the `glimpse()` function that we've used several times so far this semester.
+:::
+
+```{r}
+
+```
+
+::: callout-important
+What do we notice in the results? **Our `dates` column returns a `chr` data type!** But R has specific data types for working with date and time data, so we might want to do some data conversion here.
+:::
+
+### Step 2
+
+To clean up our data, let's create a new data frame named `df_clean` that loads the source data from the `df` data frame, and then let's use `mutate()` along with the `as.integer()` and `as.Date()` functions to create new variables that convert some of our variables into different data types.
+
+```{r}
+
+```
+
+Then let's use the `str()` function again to inspect our `df_clean` data frame:
+
+```{r}
+
+```
+
+Note what occurred here: by forcing the `dubls` variable into an integer data type, we lost the data after the decimal places in each value. In some cases this may be desired, but make note of it here because the `as.integer()` function led to **data loss**, which can be a bad thing.
+
+Also note how our `newDates` column has a `Date` format now! This will make it much easier to work with.
+
+### Step 3
+
+What happens if we try to convert our character columns into numeric values using the `as.numeric()` function?
+
+To find out, copy and paste your code from the previous block where we converted our variables, and add a new variable called `newChars`:
+
+```{r}
+
+```
+
+Now use `str()` to interrogate the data frame and see its data types:
+
+```{r}
+
+```
+
+There's something really interesting happening here, and it takes us back to the block above when we first created our dummy data: we used the `factor()` function
+
+When R constructs a factor like this, it assigns an integer code to each unique string in the order they appear in the factor declaration. However, the integer codes actually correspond to the order in which the levels are sorted alphabetically by default **unless specified otherwise**.
+
+In this case, the levels are sorted alphabetically as: - "Hello!" (level 1) - "This is" (level 3) - "some data" (level 2)
+
+So when we use `as.numeric()` to convert our factor to a number, it:
+
+-   Converts "Hello!" to the integer 1
+-   Converts "This is" to the integer 3
+-   Converts "some data" to the integer 2
+
+We can see the levels of our variable using the `levels()` function, like so:
+
+```{r}
+
+```
+
+This produces a character vector that returns each value to us in the order that it is sorted in the factor.
+
+### Step 4
+
+To override the behavior we just saw, we can specify the `levels` argument in our `factor()` function to override the default alphabetical sorting, and instead sort in an order of our choosing, like so:
+
+```{r}
+
+```
+
+When we use the `levels()` function a second time against our `df_new` data frame, we can see that the text is now sorted in our intended order.
+
+## Part 2
+
+To close out this exercise, we're going to look at some data from the COVID-19 pandemic.
+
+### Step 5
+
+Run the block below to load in the COVID data from GitHub. The data is a CSV (comma-separated values) file that we can access via its URL, and the `read_csv()` function (which is similar to the `read_excel()` function we've used many times previously) will read in the data as a new data frame named `covid`.
+
+```{r}
+#| echo: true
+#| include: false
+
+covid <- read_csv("https://raw.githubusercontent.com/d4bl/COVID19_tracker_data_extraction/refs/heads/master/workflow/python/output/latest-combined-output.csv")
+```
+
+Now let's use `str()` to preview the data:
+
+```{r}
+
+```
+
+Note that we have a lot more variables to deal with, and a variety of data types, including logical ("logi") data types, which are simply binary values like Yes/No or True/False or 1/0.
+
+**More importantly, note that the variable `Count Deaths Black/AA` displays a CHR data type, but the data appears numeric.**
+
+### Step 6
+
+To close out the exercise, let's use `mutate()` and our data conversion functions to clean and convert the data, especially our `Count Deaths Black/AA` variable.
+
+::: callout-important
+Do this part incrementally, line by line, to showcase the dirty data and our iterative process for cleaning it up via our data pipeline.
+:::
+
+```{r}
+#| warning: true
+
+
+```
+
+When we use the `is.numeric()` function at the end, we get a logical data type that confirms our successful conversion of the data: when it returns `TRUE`, it means that observation of the `convertToNumeric` variable is indeed now a nunber instead of a string.
+
+# Wrap-up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.
