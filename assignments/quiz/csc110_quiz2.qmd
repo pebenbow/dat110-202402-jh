@@ -1,0 +1,236 @@
+---
+title: 'Quiz 2'
+subtitle: "CSC 110"
+author: "Your name here"
+date: "Feb 06, 2025"
+date-format: long
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    fig-width: 8
+    fig-height: 4
+  pdf:
+    toc: true
+    toc-depth: 1
+    fig-width: 8
+    fig-height: 5
+    geometry:
+      - top=20mm
+      - left=20mm
+      - right=20mm
+      - heightrounded
+---
+
+# Instructions
+
+Welcome to CSC 110 Quiz 2!
+
+Quiz assignments can be taken **open-book** using the R4DS textbook and **open-note** using the notes you've taken and the materials we have covered in class. You may also use the built-in help features in RStudio. Otherwise, You should not rely on any outside resources. Usage of generative AI tools like ChatGPT, Claude, or DeepSeek is not allowed on this assignment.
+
+-   You must work alone on this quiz. You may ask me a clarifying question by email or in office hours, but otherwise you are not to seek outside help on this assignment.
+-   To earn full credit on coding questions, your code and its output must both be visible.
+-   If a coding question produces a plot/figure:
+    -   Include clear and descriptive labels (title, axis, etc.)
+    -   Include the `label` and `fig-cap` options at the top of each code block
+-   Written (non-code) answers to questions should be typed out in the answer boxes that are provided for you, and should be written in complete sentences. Do not replace the heading in each answer box, but instead type your responses below each heading.
+-   I recommend you save and render your Quarto doc as an HTML document regularly. This not only has the benefit of showing your output, but it also tests your code to make sure everything is working. Any errors that the rendering engine encounters will be displayed in the RStudio console.
+-   **Remember:** all work is done under the Honor Code, and you must pledge your work at the end of the assignment.
+-   When finished, render your Quarto doc as a PDF, review it carefully for completeness and cleanliness, and submit it in Gradescope. Your Qmd file will stay stored in JupyterHub if we need to refer back to it.
+
+# Setup
+
+Run the block below to load the necessary packages for this quiz.
+
+The data for this quiz are the same that we used for the Class 8 in-class activity.
+
+```{r setup}
+#| label: load-packages
+#| include: true
+#| message: false
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(readxl)
+
+```
+
+## Read in the data
+
+```{r}
+#| label: load-data
+
+nc <- read_excel("../../data/NC_ECE_2007-2014.xlsx")
+```
+
+\newpage
+
+# Questions
+
+## Question 1.1
+
+Make a new data frame called `nc14` that contains all North Carolina facilities in the year 2014, with the variables `fname`, `zip`, `ftype`, `p_pov`, `med_income`, and `QRIS_ERS.` Then create a new variable named `p_cap` which divides the `enroll` variable by `capacity.` You will use this data frame in the remaining questions.
+
+```{r}
+#| label: "Question 1.1"
+
+
+```
+
+\newpage
+
+## Question 2.1
+
+Make a new data frame that shows the number of facilities evaluated in each zip code in 2014, and the value of p_pov for each zipcode. Sort by the number of facilities in decreasing order. **Be sure this new data frame shows in your output.**
+
+```{r}
+#| label: "Question 2.1"
+
+
+```
+
+\newpage
+
+## Question 2.2
+
+Make a plot from the data frame you made in 2.1 that demonstrates variation in percent poverty across zip codes in NC.
+
+```{r}
+#| label: "Question 2.2"
+
+
+```
+
+\newpage
+
+## Question 2.3
+
+Assume that you also used the original `nc14` data frame above to create a plot that visualizes variation in `p_pov`. In 2-3 sentences, explain why your plot in 2.2 would produce a different result from this hypothetical plot.
+
+::: {.callout-note title="Answer to 2.3" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Question 3.1
+
+Write a data pipeline which adds a new variable to `nc14` (give the new variable whatever name you want) that buckets the facility types into five groups, based on the value of `ftype`, as follows:
+
+-   Independent
+-   Franchise
+-   Religious sponsored
+-   Federal, Head Start or local public school
+-   All others
+
+Show the data with this new column.
+
+```{r}
+#| label: "Question 3.1"
+
+
+```
+
+\newpage
+
+## Question 3.2
+
+Make a plot that shows the variation in `p_cap` across these five buckets you just created.
+
+```{r}
+#| label: "Question 3.2"
+
+
+```
+
+\newpage
+
+## Question 3.3
+
+In 2-3 sentences, describe the plot you just created and what it indicates about your `p_cap` variable across these different groups.
+
+::: {.callout-note title="Answer to 3.3" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Question 4.1
+
+Make a boxplot to visualize covariation between `QRIS_ERS` and `med_income`, binning `med_income` to treat it as a categorical variable, and representing the number of observations in each category by the width of the corresponding box.
+
+```{r}
+#| label: "Question 4.1"
+
+
+```
+
+\newpage
+
+## Question 4.2
+
+In 2-3 sentences, describe the visualization you just created and what it communicates about possible covariation between these two variables.
+
+::: {.callout-note title="Answer to 4.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Question 5.1
+
+Visualize the relationship between `med_income` and `QRIS_ERS` using a scatterplot.
+
+```{r}
+#| label: "Question 5.1"
+
+
+```
+
+\newpage
+
+## Question 5.2
+
+Visualize the same relationship from 5.1 using `geom_bin2d()`.
+
+```{r}
+#| label: "Question 5.2"
+
+
+```
+
+\newpage
+
+## Question 5.3
+
+In 2-3 sentences, discuss the pros and cons of each of these visualizations.
+
+::: {.callout-note title="Answer to 5.3" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+# Honor Code Pledge
+
+On my honor I have neither given nor received unauthorized information regarding this work, I have followed and will continue to observe all regulations regarding it, and I am unaware of any violation of the Honor Code by others.
+
+(Type your full name below to pledge this assignment.)
+
+::: {.callout-note title="Honor Code Pledge" appearance="minimal"}
+(replace this with your full name to pledge this assignment)
+:::
+
+# Submission checklist
+
+Before submitting your assignment in Gradescope, review this checklist carefully to ensure you have done everything appropriately.
+
+-   Correct author and date
+-   All code is clearly visible
+-   All output is clearly visible (does not apply to the Setup section), including labels and legends
+-   Written responses are typed into the appropriate answer boxes
+-   All empty or redundant plots are removed
+-   Honor Code pledge is signed
+
+Point penalties will be assessed if your assignment does not meet these guidelines.
