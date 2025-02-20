@@ -1,0 +1,258 @@
+---
+title: "Class 10: Manipulating strings and dates"
+subtitle: "In-class exercise"
+date: "Feb 20, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+---
+
+::: callout-important
+These are suggested answers. This document should be used as reference only, it's not designed to be an exhaustive key.
+:::
+
+# Goals for this exercise
+
+-   Learn how to manipulate string (character) and date data using a variety of functions, with an emphasis on date conversions using the `lubridate` package.
+
+# Setup
+
+You know the drill: load your packages!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(RColorBrewer)
+```
+
+# Exercises
+
+## Part 1
+
+In this section, we'll show how to use the `lubridate` package's `ymd()` function to parse and convert date data that exists in a variety of messy formats.
+
+### Step 1
+
+Let's start by creating a new vector with some dummy data, and then let's use `str()` to preview and examine our data types.
+
+```{r}
+
+```
+
+The output of our code is three character strings that **could** represent dates, but the safest way to proceed here is to use `ymd()` to attempt to convert these values into actual dates and look at the results.
+
+```{r}
+
+```
+
+That's a lot better! Through a very simple and quick call to the `ymd()` function, we have converted those string values into date values that R will recognize and treat appropriately.
+
+### Step 2
+
+Let's look at a few more examples. Start by overwriting our previous data frame with a new one, and this time we'll use data that is formatted somewhat differently.
+
+```{r}
+
+```
+
+Now use `ymd()` to convert the data and look at the results with `str()`:
+
+```{r}
+
+```
+
+Yet again, the `ymd()` function in `lubridate` handles this with ease. But what if we ask it to handle some really messed-up values?
+
+### Step 3
+
+Let's see how `ymd()` does when we give it a hodgepodge of dates in various formats: expressed as numbers, or with extra words and characters that might mess it up:
+
+```{r}
+
+```
+
+Easy enough. Let's try something more complicated, first by mocking up a bunch of really weird values:
+
+```{r}
+
+```
+
+OK, thanks to the `str()` function, we can see that all of these values were interpreted as string/character data, which makes sense.
+
+Now let's see what happens when we load these values into a data frame and do some conversion.
+
+First, create a new data frame named `cleanDates` and use the `data.frame()` function to load in the data we just created.
+
+```{r}
+
+```
+
+Then let's use `mutate()` to add a new column that shows the result of our attempts to convert the dates:
+
+```{r}
+
+```
+
+Not bad! This example illustrates the power of `lubridate` and the `ymd()` function, which has allowed us to take some really messed-up values in our data and successfully convert them into clean and consistent date values.
+
+## Part 2
+
+For this next part, let's return to the COVID-19 dataset we used in our last class to practice more ways to manipulate data in the tidyverse.
+
+### Step 4
+
+Let's begin by reading in the CSV data from GitHub, just like last time, and then we'll inspect our data using `str()`.
+
+```{r}
+# Read the Data for Black Lives combined update dataset
+d4bl <- read_csv("https://raw.githubusercontent.com/d4bl/COVID19_tracker_data_extraction/refs/heads/master/workflow/python/output/latest-combined-output.csv",
+  col_types = cols(
+   `Count Cases Black/AA`  = col_number(),
+   `Count Deaths Black/AA` = col_number(),
+   `Date Published`        = col_datetime()
+  )
+)
+
+# Look at the structure of our dataframe using str()
+str(d4bl)
+```
+
+::: callout-note
+Notice something we're doing here that's slightly different from last time: using the `col_types` argument of the `read_csv()` function, we are explicitly parsing the data types of some of our variables **before** we load them into the data frame. This should make it easier to convert the values later.
+
+Also note the effect this has on our `Date Published` column: it has been converted to a data type named `POSIXct`. **POSIX** is a series of standards that are used to develop and maintain compatibility between different computer operating systems. The `POSIXct` data type you see here stands for "POSIX Calendar Time", which is a way of expressing dates and times.
+:::
+
+### Step 5
+
+Here's a neat trick: the `readr` package that is part of the tidyverse has a built-in function named `problems()` that you can use to inspect a data frame and detect any issues we migth have with parsing or converting values in our data.
+
+```{r}
+
+```
+
+This produces a summary of the data that identifies each row and column where a possible data-parsing issue exists. In this case, all of the results are confined to the sixth column of our data frame, which is `Date Published`.
+
+So, even though we converted the data earlier into the `POSIXct` type, we still have some erroneous data we might need to clean up.
+
+### Step 6
+
+Let's proceed by overwriting the `Date Published` column with properly formatted dates.
+
+::: callout-note
+We can also inspect the data type for a single column by using `str(df$column)`, so let's try that here.
+:::
+
+```{r}
+
+```
+
+This confirms our dates were successfully converted! But, to be even more certain, we can use `dplyr` to build a summary table that shows all of our distinct dates and inspects each one to verify it is a valid date.
+
+```{r}
+
+```
+
+::: callout-note
+Note that we have over 4,000 NA values, which obviously we can filter out using our `is.na()` function inside of a `filter()` step.
+:::
+
+### Step 7
+
+Lastly, let's look at a couple of ways we can filter dates. In this first block, let's create a new dataframe named "d4bl_1015" that contains only rows where `Date Run` was on October 15, 2020.
+
+```{r}
+
+```
+
+Note that we can perform filtering with the `ymd()` function to make sure the values we want to filter by are formatted correctly.
+
+Let's now build a more elaborate pipeline that retrieves only the latest update from each location in the COVID dataset.
+
+```{r}
+
+```
+
+The effect of this data pipeline is we return the latest date for which we have data on COVID-19, **grouped at the location level**.
+
+## Part 3
+
+Next, we move to the world of messy string data.
+
+### Step 8
+
+In our first step, let's examine the scope of the potential problem here by getting distinct locations from our COVID dataset.
+
+```{r}
+
+```
+
+Note some of the issues in these values:
+
+-   NYC is represented a few different ways: "New York -- New York", "NewYork", and "NewYorkCity"
+-   North Dakota, South Carolina, South Dakota, and West Virginia are all missing spaces in their names.
+-   Bexar County in Texas has two variations, one with a single hyphen and another with two hyphens.
+-   Milwaukee also has two variations with different numbers of hyphens.
+
+**So we definitely have some cleanup to do.**
+
+### Step 9
+
+The `str_replace()` function is an effective way for us to take one string value and substitute it with a different one. We can use this in combination with the `mutate()` function in dplyr to chain together a sequence of data transformations that fix all of these typos.
+
+```{r}
+
+```
+
+Notice how:
+
+-   "NewYork" has been changed to "New York"
+-   "NewYorkCity" has been changed to "New YorkCity"
+
+This illustrates how `str_replace()` works by default: if it finds any part of the pattern we designate ("NewYork") in a row of our data frame, it will replace just that part with our replacement value. We can override this behavior by using a dollar sign (`$`) character to look for an **exact** string value, rather than just part of a string value.
+
+### Step 10
+
+Let's put that last idea to the test by chaining together a sequence of string replacements that allow us to fix all our NYC values.
+
+```{r}
+
+```
+
+### Step 11
+
+Now let's try a more streamlined approach to this by doing all of our string replacements inside a single `mutate()` call with the `str_replace_all()` function.
+
+```{r}
+
+```
+
+Now let's wrap a nice bow around this by deliberately overwriting our original Location column with the output of our `mutate()` and `str_replace_all()` transformations, like so:
+
+```{r}
+
+```
+
+### Step 12
+
+Lastly, let's use the `str_detect()` function to show how you can filter a data frame by looking for a pattern within a variable. In this case, we'll scan our `Status code` column for any occurrences of the word "error."
+
+```{r}
+
+```
+
+# Wrap-up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.
