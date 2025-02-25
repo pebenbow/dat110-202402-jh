@@ -1,0 +1,188 @@
+---
+title: "Class 11: Tidying Data I"
+subtitle: "In-class exercise"
+date: "Feb 25, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+    code-block-bg: true
+    code-block-border-left: "#d42121"
+---
+
+> “Tidy datasets are all alike, but every messy dataset is messy in its own way.” — Hadley Wickham
+
+# Goals for this exercise
+
+-   Learn how to use the `pivot_longer()` function to take column-wise data and transform it into row-wise data.
+
+# Setup
+
+You know the drill: load your packages!
+
+```{r setup}
+#| include: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Exercises
+
+## Defining tidy
+
+Wickham, et al outline three rules for characterizing "tidy" data:
+
+1.  Each variable is a column; each column is a variable.
+2.  Each observation is a row; each row is an observation.
+3.  Each value is a cell; each cell is a single value.
+
+In this lesson, we're going to work with some data that looks pretty clean on its surface, but would benefit from some tidying to make it easier to visualize.
+
+## Part 1
+
+Use the `tibble()` function to create a data frame named "south" so we can add some fake data to demonstrate the usage of `pivot_longer()`:
+
+```{r}
+(
+  south <- tibble(
+    state     = c("NC", "SC", "GA", "TN"),
+    pct_black = c(.2, .3, .4, .25),
+    pct_hisp  = c(.1, .2, .2, .15),
+    pct_asian = c(.1, .2, .1, .1),
+    pct_white = c(.6, .3, .3, .5)
+  )
+)
+```
+
+::: callout-note
+This data should look somewhat familiar because it follows the same structure as the data you worked with in Lab 02, where we have a lot of variables for each observation. If you recall, Lab 02 was a lot of copy & paste: in order to build your various scatterplots and boxplots, you needed to get the code right for the first variable, like `pct_black`, then copy that code and paste it in the next block, change the variable to something like `pct_asian`, then wash \>\> rinse \>\> repeat.
+
+Using `pivot_longer()` with a column-wise data structure like the one in Lab 02 (and what we have here) can drastically cut down on the amount of code you need to write to achieve similar output.
+:::
+
+### Step 1: First pivot
+
+The goal here is to pivot our `south` tibble, taking the column-wise data and rotating it 90 degrees into row-wise data. Let's start with a quick example, which we will call the **explicit method**, where we specify each individual column we want to pivot:
+
+```{r}
+
+```
+
+Note how this operation takes the column names we originally had and transposes them into a single column as character values. It does the same thing with the values that we had within each column, transposing them into a separate column.
+
+Note how the code was written:
+
+-   In the `cols` argument, we specify a list of the columns we want to pivot, in the order we want to pivot them.
+-   The `names_to` argument is the name we want to give to the column which will store the names of the columns we are pivoting.
+-   The `values_to` argument is the name we want to give to the column which will store the percent values.
+
+### Step 2: Your turn!
+
+In this step, I want you to take 5 minutes on your own or with a partner, and try to find two more ways (other than the explicit list selection I just showed you) to select your variables using `pivot_longer()` by looking at [the documentation](https://tidyr.tidyverse.org/reference/pivot_longer.html){target="_blank"}
+
+Put your first method here:
+
+```{r}
+
+```
+
+And your second method here:
+
+```{r}
+
+```
+
+## Part 2
+
+### Step 3: Tidying column names
+
+Now let's look at some ways to clean up column names. We'll start with a more manual approach where we explicitly rename each variable before the pivot using `rename()`:
+
+```{r}
+
+```
+
+There's another way we can do this that's even simpler and less manual, though, and it involves using the `names_prefix` argument of `pivot_longer()`:
+
+```{r}
+
+```
+
+This approach works because of the consistent naming of our columns: each one starts with "pct\_" and ends with the name of a racial category like black, white, asian, or hisp(anic). Of course, your data won't always be this clean, so take this measure with a grain of salt and always pay attention to how your variables are named, because consistency can make your life easier, but consistency is not always a feature of the data you will work with.
+
+### Step 4: Plotting pivoted data
+
+Let's take the output of a pivoted data frame and plot it using `ggplot2`. Specifically, let's add a bar chart that shows the demographic breakdown by state.
+
+::: callout-note
+**Remember** that this is fake data, so don't read too much into the values you see. Focus on the simplicity of visualizing this data after pivoting.
+:::
+
+```{r}
+
+```
+
+::: callout-note
+Use this as an opportunity to reflect on the code that it took to visualize this pivoted data, versus the code that was required to visualize the racial categories in Lab 02. Because of how each race was in a different variable in Lab 02, you were forced to repeat the same plots over and over again, but with different variables, just so you could compare across racial categories. **However**, with our pivoted data frame here, we can represent the demographic breakdown by state in a single plot with a minimal amount of code.
+:::
+
+## Part 3
+
+For the rest of this lesson, we're going to use the `relig_income` data frame that is included with the tidyverse. This data comes to us from the Pew Research Center's "Religious Landscape Survey," which collected data about income levels across various religions of respondents in the United States.
+
+Let's preview our data first by invoking its name:
+
+```{r}
+relig_income
+```
+
+Notice the structure of our data frame: extremely column-wise! Each row represents a religion, and the 10 columns that follow the `religion` column all represent various income levels or responses to the survey, including those who did not know their income or refused to answer the question.
+
+We're going to use this data frame to demonstrate a few more ways to efficiently pivot data that comes to us in this format.
+
+### Step 5: Your turn!
+
+Use the `c()` function and the range operators (`:`) to do a pivot with a range of variables:
+
+```{r}
+
+```
+
+Now use negative selection like we showed earlier:
+
+```{r}
+
+```
+
+Now try using helper functions like `starts_with()` and logical operators like pipes (`|`) to create logical OR conditions:
+
+```{r}
+
+```
+
+### Step 6: Saving the results
+
+Is the `relig_income` data frame tidy after my solution above? Why or why not?
+
+**No, it is not tidy because we never saved the results to a new data frame!**
+
+So let's do that next by simply taking whichever method you liked most from the ones above, and assign that to a new data frame named `relig_income_tidy`:
+
+```{r}
+
+```
+
+# Wrap-up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.
