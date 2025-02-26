@@ -1,0 +1,380 @@
+---
+title: Lab 3
+subtitle: CSC 110
+assignment: true
+categories: Lab
+author:
+  - Lab Partner A
+  - Lab Partner B
+date: 2025-03-01
+date-format: long
+lightbox: true
+pdf-engine: xelatex
+format:
+  pdf:
+    toc: true
+    toc-depth: 1
+    fig-width: 8
+    fig-height: 5
+    geometry:
+      - top=20mm
+      - left=20mm
+      - right=20mm
+      - heightrounded
+---
+
+\newpage
+
+# Instructions
+
+Welcome to CSC 110 Lab 3! In this lab, you will work with data from the Quality of Life Explorer created by the University of North Carolina at Charlotte's Urban Institute in collaboration with the city of Charlotte, Mecklenburg County, and nearby townships. The data file **qol_lab3.xlsx** is provided for you. This dataset describes how various aspects of Charlotte residents' "quality of life" varies according to neighborhood. You can explore and learn more about this project [here](http://charlottenc.gov/HNS/CE/CommunityInfo/Pages/QOL.aspx){target="_blank"}.
+
+This is a **pair programming** assignment: one student acts as the **driver**, the other as the **navigator**. The driver writes code while the navigator directs them on what to write based on the assignment instructions, and provides feedback and help as needed. You should rotate these roles roughly every 15 minutes so each person gets plenty of time in the "driver's seat."
+
+Lab assignments can be taken **open-book** using the R4DS textbook and **open-note** using the notes you've taken and the materials we have covered in class. You should not rely on any other outside resources. Usage of generative AI tools like ChatGPT, Claude, or DeepSeek is not allowed on this assignment.
+
+-   Write R code in each code block to load, transform, and plot your data.
+-   To earn full credit on coding questions, your code and its output must both be visible.
+-   If a coding question produces a plot/figure, make sure to include clear and descriptive labels (title, axis, etc.)
+-   Written (non-code) answers to questions should be typed out in the answer boxes that are provided for you. Do not replace the heading in each answer box, but instead type your responses below each heading.
+-   I recommend you save and render your Quarto doc as an HTML document regularly. This not only has the benefit of showing your output, but it also tests your code to make sure everything is working. Any errors that the rendering engine encounters will be displayed in the RStudio console.
+-   **Remember:** all work is done under the Honor Code, and you must pledge your work at the end of the assignment.
+-   When finished, render your Quarto doc as a PDF, review it carefully for completeness and cleanliness, and submit it in Gradescope. Your Qmd file will stay stored in JupyterHub if we need to refer back to it.
+
+# Setup
+
+```{r setup}
+#| include: true
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+
+qol <- read_excel("../../data/qol_lab3.xlsx", sheet="Data", skip = 1)
+```
+
+\newpage
+
+# Lab
+
+## Part 1
+
+### Question 1.1
+
+Download the `qol_lab3.xlsx` file to your laptop and use a spreadsheet program 
+like Excel or Numbers to preview and explore the data. Examine both the "Data" tab
+and the "Metadata" tab. What does each observation in the data represent? Will you 
+be able to answer questions about individual towns, zip codes or census blocks 
+in Mecklenburg County? Why or why not?
+
+::: {.callout-note title="Answer to 1.1" appearance="minimal"}
+(replace this with your answer)
+:::
+
+### Question 1.2
+
+How many different variables are in the dataset? Approximately how many different 
+variables are described in the metadata sheet? Across how many different social 
+issues? 
+
+::: {.callout-note title="Answer to 1.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+### Question 1.3
+
+Explain the significance of the highlighted rows in the Metadata tab, relative to 
+the data worksheet.
+
+::: {.callout-note title="Answer to 1.3" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Part 2
+
+**Examining median household income and adolescent birth rate**
+
+Chapter V of the LOTF report indicates that, while unintended pregnancies occur across the income distribution, low income women are five times more likely to have an unintended pregnancy than wealthier women. The task force cites research suggesting that having a child before one is ready can have negative outcomes for the life trajectory of young parents and their children. The first section of this lab asks you to explore how adolescent birth rate and income are related at the neighborhood level in Mecklenburg County.
+
+### Question 2.1
+
+Visualize the covariation between the rate of adolescent births and median household 
+income. Pay attention to your data types (categorical vs. continuous) and choose an 
+appropriate visualization based on Chapter 10 of R4DS.
+
+```{r}
+#| label: fig2.1
+#| fig-cap: "Plot 2.1"
+#| warning: false
+
+
+```
+
+\newpage
+
+### Question 2.2
+
+What do you observe about the relationship between these variables?
+
+::: {.callout-note title="Answer to 2.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+### Question 2.3
+
+Create a boxplot that visualizes the relationship between the rate of adolescent births and median household income, but use the `ntile()` function to group the income variable into **quartiles**.
+
+::: callout-tip
+Note: There is an aesthetic you can use within your geoms to partition variables into groups. See if you can figure out how to invoke that argument in order to meet the requirements of this question.
+:::
+
+```{r}
+#| label: fig2.3
+#| fig-cap: "Plot 2.3"
+#| warning: false
+
+
+```
+
+\newpage
+
+### Question 2.4
+
+Use the features of the boxplot (i.e, the bar, box, whiskers and dots) to interpret your findings and discuss the pros and cons of this visualization, including breaking up the income variable by quartiles.
+
+::: {.callout-note title="Answer to 2.4" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+### Question 2.5
+
+So far in this course, we have bucketed continuous variables into groups using methods like `case_when()`, or we've used the `bins` and `binwidth` arguments to control the sizes of our bins when using `geom_histogram()`. In the previous question, we also grouped our income data into quartiles. 
+
+For this question, continue to visualize the relationship between the rate of adolescent births and median household income, but explore another way of grouping data with boxplots. In particular, this time use the `cut_width()` function with our household income variable. Consult the documentation for this function if you need help figuring out how to use it. Pick an appropriate value for `cut_width()` that you feel best visualizes the relationship.
+
+```{r}
+#| label: fig2.5
+#| fig-cap: "Plot 2.5"
+#| warning: false
+
+
+```
+
+\newpage
+
+### Question 2.6
+
+What does `cut_width()` do? How does this compare to your use of `ntile()` in the previous plot? Discuss the relative advantages and disadvantages of the two different boxplots for visualizing this relationship.
+
+::: {.callout-note title="Answer to 2.6" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Part 3
+
+### Question 3.1
+
+Chapter V of the LOTF report asserts that one in five families in Mecklenburg County live below the Federal Poverty Level (FPL) for a family of four. Locate this FPL value in the report and use it to add a new variable to your `qol` data frame that buckets each neighborhood into either:
+
+-   **Low income**: those with a median HHI below the aforementioned poverty line
+-   **High income**: those with a median HHI at or above 200% of the poverty line
+-   **Other**: all other neighborhoods
+
+For your output, after modifying the data frame, create a summary table that displays a count of the number of neighborhoods within each of these buckets.
+
+```{r}
+#| label: fig3.1
+#| fig-cap: "Summary table 3.1"
+#| warning: false
+
+
+```
+
+\newpage
+
+### Question 3.2
+
+Using the data frame from the previous question, create a visualization that compares the distributions of adolescent birth rates for low-income neighborhoods versus high-income neighborhoods. Do not include the "Other" category in this plot.
+
+```{r}
+#| label: fig3.2
+#| fig-cap: "Plot 3.2"
+#| warning: false
+
+
+```
+
+\newpage
+
+### Question 3.3
+
+Create a summary table that summarizes the mean adolescent birth rate for these two groups.
+
+```{r}
+#| label: fig3.3
+#| fig-cap: "Summary table 3.3"
+#| warning: false
+
+
+```
+
+\newpage
+
+### Question 3.4
+
+Recall the LOTF report's assertion that "lower income women are five times more likely to have an unintended pregnancy than wealthier women" (page 40). 
+
+Is the comparison you just performed a good test of this assertion? Why or why not?
+
+::: {.callout-note title="Answer to 3.4" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Part 4
+
+### Question 4.1
+
+Visualize the combined distribution of adolescent birth rates, median household income, and access to adequate prenatal care. We have not used that third variable previously in this lab, so you will need to examine the metadata for our QOL file and find the appropriate variable.
+
+Note that it may help to **group** one or more of these variables using some of the techniques we've learned previously, and you will need to choose an appropriate aesthetic to visually represent the third variable. Also, depending on how you choose to bucket your data, you may want to employ factors to override how the buckets are sorted. Play around with a few different options and try to figure out which configuration does the best job of visualizing these relationships.
+
+```{r}
+#| label: fig4.1
+#| fig-cap: "Plot 4.1"
+#| warning: false
+
+
+```
+
+\newpage
+
+### Question 4.2
+
+Describe why you decided to assign variables to the asthetics you chose. How did these choices help you tell a compelling story with this visualization? Be specific and thorough in your explanation.
+
+::: {.callout-note title="Answer to 4.2" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+### Question 4.3
+
+The LOTF report states, "When women and their partners in our community do decide 
+to become pregnant, prenatal and postnatal care are critically important to providing 
+a healthy start for a child." Given this goal, what implications do your findings 
+in the previous questions have for LOTF recommendations regarding income, 
+adolescent pregnancy and prenatal care?
+
+::: {.callout-note title="Answer to 4.3" appearance="minimal"}
+(replace this with your answer)
+:::
+
+\newpage
+
+## Part 5: Exploratory Data Analysis
+
+In the second half of the lab, you will conduct your own exploratory data 
+analysis (EDA). Maybe you read something in the LOTF report that you want to 
+challenge or verify, or maybe you spotted some interesting variables in the QOL 
+dataset and you want to investigate a possible connection between them. Whatever 
+the source of your curiosity, this portion of the assignment gives you the 
+freedom to indulge that curiosity while also giving you a small taste of what 
+your final project in this course will require of you.
+
+::: callout-tip
+[Sections 10.1 and 10.2 of R4DS](https://r4ds.hadley.nz/EDA.html){target="_blank"} give a pretty good summary of EDA and what it entails, as well as how to ask a quality research question. 
+:::
+
+In this section, you should engage in an iterative process where you pose an initial 
+research question, investigate that question by visualizing your chosen variables 
+from the dataset, and produce a written analysis of your findings. Then, based on 
+your findings, write a second research question that refines upon the initial 
+question or takes your analysis in a slightly different direction, and repeat the 
+process until you have produced **at minimum four research questions**, where 
+each research question has its own distinct set of visualizations and analysis.
+
+Each research question should use a minimum of 3 different variables 
+from the QOL data frame. If you find in your initial research question that one 
+of your chosen variables does not produce the results you expected, make note of 
+that in your written analysis and consider swapping that variable in your 
+subsequent research questions, or segment the data to search for a possible 
+occurrence of Simpson's Paradox. The point is: you should be engaging in an 
+open-ended exploration of the data.
+
+With your written analysis, write as though you were guiding future students through 
+your exploration, along with an answer key. This is a kind of narrative 
+style, almost like a scientific "train of thought." You may consider following 
+[this example](https://nbviewer.org/github/mircealex/DQ_Style_Guide/blob/master/Example_project_DQ.ipynb){target="_blank"}.
+
+Ultimately, the idea here is to create a document that someone can use to reproduce your 
+analysis and results, which is the crux of your final project in this course. 
+Be sure to clearly state your EDA questions, explain why you chose the 
+visualizations that you did, and be specific when describing your findings. 
+Use appropriate markdown headings (`###` and `####`) to delineate the different 
+parts of your analysis. Pay attention to spelling, grammer, and punctuation,
+because I will be paying attention to those.
+
+Each research question is worth 10 points, and you will be graded primarily on:
+
+-   2 pts: Your choice of an appropriate research question
+-   4 pts: The quality of your data visualizations
+-   4 pts: The clarity of your written narrative and analysis
+
+With four iterative research questions, you have a maximum possible score of 40 
+points on this portion of the lab.
+
+\newpage
+
+### Research Question 1
+
+\newpage
+
+### Research Question 2
+
+\newpage
+
+### Research Question 3
+
+\newpage
+
+### Research Question 4
+
+\newpage
+
+# Honor Code Pledge
+
+On my honor I have neither given nor received unauthorized information regarding this work, I have followed and will continue to observe all regulations regarding it, and I am unaware of any violation of the Honor Code by others.
+
+::: {.callout-note title="Honor Code Pledge" appearance="minimal"}
+Person 1: (replace this with your full name to pledge this assignment) 
+Person 2: (replace this with your full name to pledge this assignment)
+:::
+
+# Submission checklist
+
+Before submitting your assignment in Gradescope, review this checklist carefully to ensure you have done everything appropriately.
+
+-   Correct authors and date
+-   All code is clearly visible
+-   All output is clearly visible (does not apply to the Setup section), including labels and legends
+-   Written responses are typed into the appropriate answer boxes
+-   All empty or redundant plots are removed
+-   Honor Code pledge is signed
+
+Point penalties will be assessed if your assignment does not meet these guidelines.
+
+::: callout-note
+For a complete description of the grading rubrics used for this assignment, please consult the Rubrics page on the [course website](https://go.davidson.edu/csc110-home){target="_blank"}.
+:::
