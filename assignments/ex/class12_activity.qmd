@@ -1,0 +1,143 @@
+---
+title: "Class 12: Tidying Data II"
+subtitle: "In-class exercise"
+date: "Feb 27, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+    code-block-bg: true
+    code-block-border-left: "#d42121"
+---
+
+::: callout-important
+These are suggested answers. This document should be used as reference only, it's not designed to be an exhaustive key.
+:::
+
+# Goals for this exercise
+
+-   Learn how to use the `pivot_wider()` function to take row-wise data and transform it into column-wise data.
+
+# Setup
+
+You know the drill: load your packages!
+
+```{r setup}
+#| include: true
+#| message: false
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(readxl)
+```
+
+# Exercises
+
+## Part 1
+
+For this part, we're going to introduce you to `pivot_wider()` using the `us_rent_income` data frame that is included with the tidyverse. This data frame is a small subset of data that was captured from the 2017 [American Community Survey (ACS)](https://www.census.gov/programs-surveys/acs/about.html){target="_blank"}, a data product of the United States Census Bureau.
+
+### Step 1
+
+Let's begin by previewing the data frame by simply invoking its name:
+
+```{r}
+us_rent_income
+```
+
+::: callout-important
+Note the structure of the data. We have multiple rows per US state, with each state having variables for income and rent. Probably the best way to express the grain of this dataset is **one row per state per variable**.
+
+But also note that each variable row (income and rent) has two dependent columns: `estimate` and `moe`. These particular columns are very common in the ACS data. The `moe` column stands for "Margin of Error," and it is dependent upon the `estimate` column. 
+
+In stats speak, the **sampling error** of survey data is the difference between an estimate based on a sample and the corresponding value that would be obtained if the estimate were based on the entire population. Margin of Error (MOE) is a commonly-used statistic that can express the magnitude of this sampling error. 
+
+Put simply, **MOE is a statistic that expresses the range of uncertainty in our estimates.** The larger the MOE relative to the estimate, the greater the amount of uncertainty or variability. Put another way: MOE is a measure of reliability that tells us how much our data may differ from real-world observations.
+
+Adding the MOE to the estimate provides an upper limit and subtracting the MOE from the estimate provides a lower limit of the range where the true value (meaning the value for the entire population, not just the sample) of the estimate most likely actually falls.
+:::
+
+### Step 2
+
+In this step, we'll use `pivot_wider()` to pivot our data 90 degrees, but this time we're taking row-wise data and making it column-wise. In doing so, we will take our `estimate` and `moe` variables and move them up into the columns of our dataset. This will also have the effect of reorganizing our dataset into one with a grain of **one row per state**.
+
+```{r}
+
+
+```
+
+::: callout-note
+Note what `pivot_wider()` does here: it effectively replaces our original columns with new ones, where the values in our original `variables` column ("income" and "rent") become suffixes for the column names, while the `estimate` and `moe` measures become the column prefixes. 
+:::
+
+### Step 3
+
+If we want to see the range of uncertainty that our MOE variable gives us, as mentioned above, all we need to do is a little bit of addition and subtraction. But if we want to do this with the least amount of coding, we 
+
+```{r}
+
+
+```
+
+## Part 2
+
+In this part of the lesson, we're going to revisit Lab 02 and some of the work you did there to prepare and visualize your data. This lesson will show you some streamlined methods for getting to the same end point, but this time using pivoting to get us there faster and more efficiently.
+
+When you visualized variation in percentage of each race/ethnicity, you were stuck making separate variables and separate visualizations, because there was not a single race variable.
+
+Thanks to `pivot_longer()`, we can do better!
+
+First, let's load in the cms data:
+
+```{r}
+cms <- read_excel("../../data/ccd_cms_1314.xlsx")
+```
+
+Now let's follow the same process as in Lab 02:
+
+-   Filter on Charlotte-Mecklenburg Schools
+-   Use `mutate()` and `case_when()` to identify magnet, charter, and traditional public schools
+-   Use `select()` to limit the number of columns you're working with
+
+But once you've gotten to that step, use `pivot_longer()` to to create a race/ethnicity variable BEFORE you compute any percentages. Capture all seven race/ethnicity categories. Then, calculate the percentage that each race/ethnicity composes of the overall student body at each school.
+
+::: callout-tip
+Work sequentially and logically using your dplyr verbs!
+:::
+
+```{r}
+
+
+```
+
+Now make a box plot that shows variation in all of the races/ethnicities in one visual, but facet the data by school type so we can easily compare the distributions across our different school types.
+
+```{r echo=TRUE}
+# Boxplot variant 1
+
+
+
+# Boxplot variant 2
+
+
+```
+
+::: callout-note
+What conclusions can you draw about racial/ethnic composition of Charlotte-Mecklenburg schools from this boxplot? 
+What important characteristics of the composition can you NOT see in this plot?
+:::
+
+# Wrap-up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.
