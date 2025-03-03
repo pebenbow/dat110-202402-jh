@@ -1,0 +1,206 @@
+---
+title: "Class 13: Mutating joins"
+subtitle: "In-class exercise"
+date: "Mar 4, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+    code-block-bg: true
+    code-block-border-left: "#d42121"
+---
+
+::: callout-important
+These are suggested answers. This document should be used as reference only, it's not designed to be an exhaustive key.
+:::
+
+# Goals for this exercise
+
+-   Learn how to use mutating joins like `left_join()` and `inner_join()` to merge two tables or data frames together based on attributes they have in common.
+-   Explore data about worldwide gender income disparities.
+
+# Setup
+
+You know the drill: load your packages!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(ggrepel)
+```
+
+And now let's load our data.
+
+The main dataset for today's lesson comes to us from the [World Inequality Database (WID)](https://wid.world/data/){target="_blank"}, a product of the [World Inequality Lab](https://inequalitylab.world/en/){target="_blank"}, which is itself a research center based out of the Paris School of Economics and UC Berkeley. The WIL's mission is to study global inequality and promote evidence-based public policies centered on issues of social, economic and environmental justice.
+
+We are importing two data frames into RStudio. The first one, `countries`, is a simple list of world countries and their regions and subregions. The second one, `labor`, contains yearly data about female labor income share (see below).
+
+```{r}
+#| label: load-data
+#| echo: true
+#| message: false
+
+countries <- read_delim("../../data/WID_countries.csv", delim=";") |>
+  filter(!is.na(region)) |>
+  select(
+    alpha2,
+    country = shortname,
+    region,
+    subregion = region2,
+  )
+
+labor <- read_excel(
+  path = "../../data/WID_female_inc_share.xlsx",
+  col_names = c("country","indicator","indicator_code","year","value")
+  ) |>
+  select(country, year, value)
+```
+
+## FLIS
+
+"Female labor income share" (FLIS) is defined as the total labor income received by women **divided by** the total labor income of the population. In other words, it's a percentage representing the share of global labor income (including wages and salaries) earned by women.
+
+$$
+FLIS = \frac{\text{Labor income received by women}}{\text{Total labor income}}
+$$
+
+For more detail on the WID's methodology behind this metric, check out their [technical notes](https://wid.world/www-site/uploads/2024/12/WorldInequalityLab_TechnicalNote_2024_13_Female-Labor-Income-Share_Final.pdf){target="_blank"}.
+
+# Exercises
+
+## Part 1
+
+### Left join
+
+Remember what [§ 19.3.2 of R4DS](https://r4ds.hadley.nz/joins.html#specifying-join-keys){target="_blank"} tells us:
+
+> By default, `left_join()` will use all variables that appear in both data frames as the join key, the so called **natural join**.
+
+We can see a natural join in action when we attempt our first left join by **not** explicitly specifying a join key, like so. The output of the `left_join()` function will include a quick hint telling us what column(s) it chose to join our two tables on:
+
+```{r}
+
+```
+
+::: callout-tip
+Implicit (natural) joins can be OK, but be careful with them. The R4DS excerpt linked above includes a very good example of how one of these implicit joins can get you into trouble. **In general, I highly recommend you use explicit join syntax in your code, even when it seems unnecessary**.
+:::
+
+To do an explicit join, simply specify the `by =` argument inside the `left_join()` function:
+
+```{r}
+
+```
+
+Note how this produces the exact same output as the previous example, but anybody who comes after us to try to reproduce our code has a clearer idea of **how** we joined these two tables because we explicitly specified the relationship.
+
+### Inner join
+
+```{r}
+
+```
+
+If we want to locate the difference of 31 records between our `left_join()` and `inner_join()` examples, we can simply take our left-joined data frame and filter to locate all the NA values:
+
+```{r}
+
+```
+
+## Part 2
+
+Now that we've explored the difference between `left_join()` and `inner_join()`, let's take a crack at visualizing some yearly time series data that illuminates gender pay disparities between different regions of the world.
+
+### Grouping by region
+
+First, we'll begin by grouping our data by region **and year**. Let's create a new data frame named `labor_by_region` which aggregates all this for us, and let's calculate the mean FLIS:
+
+```{r}
+
+```
+
+### Line chart 1 (by region)
+
+Now let's take our grouped data frame and load it into a ggplot visual. In particular, let's use `geom_line()` to create a line chart that shows us how the FLIS measure has changed on a yearly basis. To accomplish this, we can put the `year` variable on the geom's X axis.
+
+Along the way, let's also explore how to add some labels that might make this chart a little easier to interpret.
+
+```{r}
+
+```
+
+### Grouping by subregion
+
+**Which sub-regions in Asia have highest gender parity?** If we want to answer this question, we need to aggregate our FLIS data at a more precise or granular level. Specifically, we need to determine the mean FLIS value for each subregion. So let's repeat the same process we did earlier, but with a slight variation in our code, to produce a new data frame named `labor_by_subregion`.
+
+```{r}
+
+```
+
+### Line chart 2 (by subregion)
+
+```{r}
+
+```
+
+### Line chart 3 (by country)
+
+```{r}
+
+```
+
+## Part 3
+
+Lastly, let's join even more data by bringing in the World Bank data that we used in one of our earliest exercises, creating a new data frame named `worldbank`:
+
+```{r}
+#| echo: true
+#| message: false
+
+worldbank <- read_csv("../../data/worldbank.csv")
+```
+
+And now let's join this new data frame to one of our earlier joined data frames by joining on some column(s) they share in common.
+
+First, let's try it with a natural (implicit) join to see what columns R thinks we should join on:
+
+```{r}
+
+```
+
+::: callout-tip
+Note how R replies back with this message when confronted with the natural key join:
+
+```         
+Joining with `by = join_by(country, year, region)`
+```
+
+It looked at both tables and found three columns with shared names, but this poses multiple problems for us:
+
+-   Country names and region names can be different depending on the source of the data.
+-   Our World Bank data frame has data for the year 2022, but our WID data has data from 1990 to 2024.
+
+This is all evident in the fact that our code above does not return any values for the columns `alpha2`, `subregion`, or `value`. This tells us that R was not able to find any matches based on these criteria.
+:::
+
+With these differences in mind, it's probably a good idea for us to be more explicit in our join syntax and use a column that we can probably tell is **standardized** between our World Bank data and our WID data.
+
+Let's use the `iso2c` and `alpha2` columns that exist in both datasets to join our tables together, and let's make sure to select only the columns we think we need. In this case, let's get each country's name, region,
+
+```{r}
+
+```
+
+# Wrap-up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.

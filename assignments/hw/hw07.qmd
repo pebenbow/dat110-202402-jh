@@ -1,0 +1,261 @@
+---
+title: "Homework 07"
+subtitle: "CSC 110 - Data Science & Society"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+assignment: true
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    fig-width: 8
+    fig-height: 4
+    code-link: true
+---
+
+# Intro
+
+This assignment focuses on **relational data** and **joins** using the `dplyr` package.
+
+In contrast with most of the datasets in this class, which focus on weighty topics of social and economic justice, this assignment will divert us to a lighter and more fun subject: sports analytics! You’ll work with datasets from the `Lahman` package, which contains historical baseball data, including information about players, teams, batting, fielding, pitching, and awards. Your task is to use `dplyr` joins to combine and analyze these datasets.
+
+As you work through this homework assignment, you’ll practice using **mutating joins** (e.g., `left_join()`) and **filtering joins** (e.g., `semi_join()` and `anti_join()`). These skills are essential for working with real-world datasets that are often spread across multiple tables.
+
+**Note:** For this assignment, make sure to add appropriate labels to each visualization.
+
+::: callout-note
+I don't grade the homework for correct answers. I just check to see 
+that you attempted the questions because these assignments are meant to give you 
+valuable practice with techniques that we will use in class activities, labs, 
+and quizzes.
+:::
+
+Happy coding!
+
+Prof.B
+
+# Setup
+
+Because we're dealing with a new package that does not come pre-installed in JupyterHub, you will need to run the following command in your RStudio console:
+
+::: callout-note
+You can attempt to run this in a Quarto code block, but I don't recommend it. Use the Console instead for the best results!
+:::
+
+```{r}
+#| label: install-package
+#| eval: false
+#| echo: true
+
+install.packages("Lahman")
+```
+
+Next, run the setup block below to load the packages you need, including our new Lahman package.
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+#| message: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(Lahman)
+```
+
+# Data preview
+
+Run the code block below to preview the datasets from the Lahman package. These datasets include `Batting`, `People`, `Teams`, `Salaries`, `Pitching`, `Fielding` and `AwardsPlayers`. Use `head()` or `View()` to explore the data.
+
+```{r}
+#| label: preview-data
+#| echo: true
+#| include: true
+
+# Preview datasets
+head(Batting)
+head(People)
+head(Teams)
+head(Salaries)
+head(Pitching)
+head(Fielding)
+head(AwardsPlayers)
+```
+
+
+# Exercises
+
+### Question 1
+
+Use a **mutating join** to add player information from the `People` dataset to the `Batting` dataset. Save the result in a new dataset called `batting_with_names`. Ensure the new dataset retains all rows from `Batting`, even if there is no matching player information.
+
+::: callout-tip
+Use `left_join()` to combine Batting and People on the `playerID` column.
+:::
+
+```{r}
+#| label: question-1
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 2
+
+Use a **filtering join** to find all unique players in the `batting_with_names` dataset who have won an award (as recorded in the `AwardsPlayers` dataset). Save the result in a new dataset called `batting_award_winners`. Include only the columns `playerID`, `teamID`, `nameFirst`, and `nameLast`.
+
+::: callout-tip
+Use `semi_join()` to filter `batting_with_names` based on matching rows in `AwardsPlayers` using the `playerID` column.
+:::
+
+```{r}
+#| label: question-2
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 3
+
+Use a **filtering join** to find all unique players players in the `batting_with_names` dataset who have not won an award. Save the result in a new dataset called `batting_no_awards`. Include only the columns `playerID`, `teamID`, `nameFirst`, and `nameLast`.
+
+::: callout-tip
+Use `anti_join()` to filter `batting_with_names` based on non-matching rows in `AwardsPlayers` using the `playerID` column.
+:::
+
+```{r}
+#| label: question-3
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 4
+
+Use a **mutating join** to add team information from the `Teams` dataset to the `batting_with_names` dataset. Filter the dataset to include only players who have had a World Series win (indicated by "Y" in the WSWin column). Save the result in a new dataset called `players_ws_wins` Include the columns `playerID`, `nameFirst`, `nameLast`, `yearID`, `teamID`, `W`, `L`, and `WSWin`. Then, create another dataframe called `top_12_ws_wins` using the `players_ws_wins` dataset, which contains the top 12 MLB players with the most World Series wins. Include the columns `playerID`, `nameFirst`, `nameLast`, and `ws_wins` (the count of World Series wins).
+
+::: callout-tip
+Use `left_join()` to combine `batting_with_names` and `Teams` on the `teamID` and `yearID` columns.
+Use `group_by()` and `summarize()` to count World Series wins for each player.
+Use `arrange()` and `slice()` to find the top 12 players with the most World Series wins.
+:::
+
+```{r}
+#| label: question-4
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 5
+
+Calculate the total number of career home runs (HR) for each player in the `Batting` dataset. Use a **mutating join** to add player names from the `People` dataset to the result. Save the final dataset as `players_career_hr`. Include the columns `playerID`, `nameFirst`, `nameLast` and sort the players by total number of career HRs in descending order.
+
+```{r}
+#| label: question-5
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 6
+
+Now, using the `players_career_hr` dataset from **Question 5**, create a bar chart showing the top 10 players with the most career home runs. You will need to create a new column called `player_fullname` that appends the `nameFirst` and `nameLast` columns into one. Make sure to add appropriate labels to the visualization.
+
+```{r}
+#| label: question-6
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 7
+
+Use `left_join()` to add salary information from the `Salaries` dataset to the `Batting` dataset. Filter the dataset for the year 2016 and save the result in a new dataset called `batting_with_salaries`. Additionally, make sure to filter for N/A values in the `salary` column. Then, create a boxplot of the distribution of salaries, highlighting any outliers in red. Make sure to add appropriate labels to the visualization.
+
+::: callout-tip
+Add `relationship = "many-to-many"` as the last parameter for `left_join()` to silence warnings when joining. 
+:::
+
+```{r}
+#| label: question-7
+#| echo: true
+#| include: true
+
+
+```
+
+
+### Question 8
+
+Use **multiple joins** to create a dataset that combines information from the `Batting`, `Pitching`, and `People` datasets. Save the result in a new dataset called `players_batting_pitching`. Include the columns `playerID`, `nameFirst`, `nameLast`, `yearID`, `teamID`, `HR` (home runs from Batting), and `SO` (strikeouts from Pitching). Make sure the dataset only includes players who have both batting and pitching statistics in the same year. Then, create a scatter plot to visualize the relationship between home runs (HR) and strikeouts (SO) for these players. Add a line of best fit and appropriate labels to the visualization.
+
+::: callout-tip
+Use `inner_join()` to ensure only players with both batting and pitching statistics are included.
+Use `left_join()` to add player names from the `People` dataset.
+:::
+
+```{r}
+#| label: question-8
+#| echo: true
+#| include: true
+
+
+```
+
+### Question 9
+
+Use `left_join()` to create a dataset that combines information from the `Batting` and `Teams` datasets. Calculate the batting average (total hits divided by total at-bats) for each team and year. Save the result in a new dataset called `team_batting_avg`. Then, create a heatmap to visualize the batting averages by team and year. Filter the dataset to include only years after 2010. Make sure to add appropriate labels and a title to the visualization.
+
+::: callout-tip
+Use `geom_tile()` to create the heatmap.
+:::
+
+```{r}
+#| label: question-9
+#| echo: true
+#| include: true
+
+
+```
+
+
+### Question 10
+
+Use `left_join()` to create a dataset that combines information from the `Batting` and `Fielding` datasets. Calculate the total home runs (HR) for each position (POS) from the years 2000–2023. Save the result in a new dataset called `hr_by_position`. Then, create a bar chart to visualize the total home runs by position, with each position represented by a different colored bar. Make sure to filter for N/A values in player positions and add appropriate labels to the visualization.
+
+::: callout-tip
+Use `group_by()` and `summarize()` to calculate total home runs by position.
+:::
+
+```{r}
+#| label: question-10
+#| echo: true
+#| include: true
+
+
+```
+
+
+# Submit homework
+
+In order to get credit for this assignment, you must render the document to PDF 
+and upload it to Gradescope.
+
+1.  The Render button at the top of this document has two options: HTML and PDF. 
+First, attempt the "Render PDF" option. This should produce a document you can 
+upload straight to Gradescope.
+2.  If the "Render PDF" option does not work, select "Render HTML" instead. You 
+can then use the "Open in browser" option to open the HTML document in your web 
+browser, and from there you can use your browser's built-in print commands to 
+print the document into a PDF.
+3.  Save the PDF file to your machine.
+4.  Open Gradescope, find the homework assignment, and upload your work.
