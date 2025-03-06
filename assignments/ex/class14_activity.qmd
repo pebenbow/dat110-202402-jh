@@ -1,0 +1,305 @@
+---
+title: "Class 14: Filtering joins"
+subtitle: "In-class exercise"
+date: "Mar 6, 2025"
+author: "Pete Benbow"
+toc: true
+lightbox: true
+format: 
+  html:
+    html-table-processing: none
+    page-layout: full
+    code-link: true
+    code-block-bg: true
+    code-block-border-left: "#d42121"
+---
+
+::: callout-important
+These are suggested answers. This document should be used as reference only, it's not designed to be an exhaustive key.
+:::
+
+# Goals for this exercise
+
+-   Learn how to use filtering joins like `()` and `()` to merge two tables or data frames together and filter their product based on attributes they have in common.
+-   Continue exploring data about worldwide gender income disparities.
+
+# Setup
+
+You know the drill: load your packages!
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| message: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+```
+
+And now let's load our data:
+
+```{r}
+#| label: load-data
+#| echo: true
+#| message: false
+
+countries <- read_delim("../../data/WID_countries.csv", delim=";") |>
+  filter(!is.na(region)) |>
+  select(
+    alpha2,
+    country = shortname,
+    region,
+    subregion = region2,
+  )
+
+labor <- read_excel(
+  path = "../../data/WID_female_inc_share.xlsx",
+  col_names = c("country","indicator","indicator_code","year","value")
+  ) |>
+  select(country, year, value)
+
+worldbank <- read_csv("../../data/worldbank.csv")
+```
+
+# Background
+
+There are two types of filtering joins: semi-joins and anti-joins.
+
+-   **Semi-joins** return all rows in Table X that have a match in Table Y.
+
+-   **Anti-joins** return all rows in Table X that do **NOT** have a match in Table Y.
+
+At this point, it has probably dawned on you that the functionality of a semi-join sounds a lot like the **inner join** we learned in our previous lesson. You will recall that the `inner_join()` function also returns all rows that match between two tables.
+
+You may also have already figured out that the functionality of an anti-join can potentially be accomplished with a `left_join()` function by simply joining two tables and then using the `filter()` function to find <NA> values, which would also allow us to find rows in one table that don't have matches in another.
+
+Both of these things are true. However, the big difference is that filtering joins merely filter one table based on the existence of some data in a separate, joined table. They do not add any data from the joined table. Meanwhile, mutating joins will not only do the matching, but they will also add the columns from the joined table. Mutating joins create a combined product of the two tables, with all of their matching rows **and** their columns.
+
+Let's use the following exercises to explore these differences.
+
+::: callout-tip
+Whether to use a mutating join or a filtering join as part of your pipeline code will depend on what you are trying to accomplish. Do you just need to filter one table based on the existence of data in another? Then use a filtering join. But if you need to actually merge data from two tables into one, a mutating join is your best bet.
+:::
+
+# Exercises
+
+Before we explore these two types of filtering joins, let's get row counts from our `worldbank` and `countries` data frames.
+
+```{r}
+# Count of rows in World Bank data
+
+# Count of rows in WID data
+
+# Union to get results together
+
+```
+
+::: callout-tip
+We see that the `worldbank` data frame has fewer rows (215) than the WID data (242), but there are attributes they have in common, such as country names and 2-digit abbreviations. We can potentially use these columns to match up our data frames and figure out why they have different row counts.
+:::
+
+## Part 1: Semi-joins
+
+### Exercise 1
+
+As stated above, semi-joins keep all rows in x that have a match in y. Let's use this to join our World Bank data to our WID data, and figure out how many countries they have in common using the 2-digit country codes as the shared key between them.
+
+```{r}
+
+```
+
+We get 214 rows returned, whereas our original World Bank data frame had 215 rows, so there is one single, solitary country that the World Bank tracks data for, but which the WID seemingly does not. We'll use anti-joins to investigate this rogue country in a few moments.
+
+::: callout-tip
+Note that I am using a slightly different syntax here than I did in our previous lesson. On Tuesday, I used the `c()` function to create a list, but here I'm using the `join_by()` function. These are just two different approaches for getting to the same end result. Personally, I prefer the appearance of my code when I use `join_by()` versus the other approach.
+:::
+
+### Exercise 2
+
+But first, let's see what happens if we try to semi-join the two tables based on country names:
+
+```{r}
+
+```
+
+::: callout-tip
+Note that we've now gone from our original data frame of 215 rows down to 190. This is most likely due to differences in how country names are stored in these different data sets. For example, the World Bank data stored North Korea as "Korea, Dem. People's Rep.," while the WID data stores it as "North Korea." Our code is going to have a hard time matching those rows. And that's why using our 2-digit country codes is going to be the best approach, because those codes are standardized and reliable, while country names can vary widely depending on the source.
+:::
+
+### Exercise 3
+
+To showcase the differences between mutating and filtering joins, let's **inner** join our World Bank and WID data using their 2-digit country codes:
+
+```{r}
+
+```
+
+We get a combined product that is 214 rows long, matching the 214 rows that were returned by our semi-join in Exercise 1 a few moments ago. However, the key distinction is that what we just did with `inner_join()` returns a **combined product**. We can see this with the presence of columns like `country.x` and `region.x` alongside `country.y` and `region.y`. R has added these suffixes to the column names to distinguish the ones that come from our left-hand table (World Bank) and those that came from our right-hand table (WID). 
+
+## Part 2: Anti-joins
+
+We've just seen how semi-joins can be useful for filtering tables based on the presence of matching rows. Now let's talk about **anti-joins**, which filter tables based on the NON-matching data. These joins are extremely useful for finding the data that two tables do not have in common, making them handy for detecting potential anomalies or unclean data that we may need to account for in our data pipelines.
+
+### Exercise 4
+
+You will recall that our original World Bank data frame has 215 rows, but when we joined it to the WID data to find matching countries, the result only returned 214 rows. In this first example, let's use `anti_join()` to figure out which country is the apparent culprit behind this discrepancy.
+
+```{r}
+
+```
+
+This code highlights the Channel Islands as the culprit. Truthfully, the Channel Islands are not a country, meaning a political entity. They are "Crown Dependencies" of the United Kingdom, which means they are not sovereign states, and neither are they member states of the UK Commonwealth. They are self-governing islands that the UK is "responsible for" (whatever that means!). The World Bank represents the Channel Islands in their data, but apparently the WID does not.
+
+So, mystery solved with a little help from our friend `anti_join()`!
+
+### Exercise 5
+
+Let's see what happens when we flip our join. In other words, let's swap the positions of our two data frames so we can find our which WID countries don't exist in the World Bank data frame!
+
+::: callout-tip
+Note that you will also need to swap the variables in your `join_by()` function!
+:::
+
+```{r}
+
+```
+
+The result here is a bit longer (28 rows) and full of interesting geopolitical stories:
+
+-   The German Democratic Republic, also known as East Germany, which ceased to exist when the Iron Curtain collapsed and Germany reunified in 1989.
+-   The Falkland Islands, which Argentina and the United Kingdom both assert sovereignty over. The two countries fought a war over the Falklands in 1982 that left hundreds dead.
+-   Kosovo, which declared its independence from Serbia in 2008, but which many countries (including the Russian Federation, a notable ally of Serbia) have not yet recognized as an independent state.
+-   The USSR (Soviet Union), which dissolved in 1991, but the memory of which still haunts Eastern Europe in particular. Just ask the Ukrainian people, or the Serbs and Kosovars.
+-   Taiwan, which remains one of the most dangerous geopolitical flashpoints in the world today. (See Dr. Rigger for more!)
+
+::: callout-tip
+The main takeaway here should be that the WID data frame contains more countries than the World Bank data frame, but the WID data consists of data collected from geographical and political entities that may no longer exist, or that do not have sovereign status, or for whom their sovereignty is disputed.
+:::
+
+And this helps us reconcile the differences between our data frames:
+
+-   `worldbank` has 215 rows
+-   `countries` has 242 rows
+-   Combined on country code, they share 214 rows in common
+-   `worldbank` has 1 country that `countries` lacks: the Channel Islands
+-   `countries` has 28 countries that `worldbank` lacks (above)
+
+### Exercise 6
+
+Let's riff on our previous exercise by using `anti_join()` to find the differences in country names between our two data frames.
+
+```{r}
+
+```
+
+The results are interesting: Egypt, the United States, Venezuela, Yemen, Kyrgyzstan, Iran, South Korea... all of these are showing up in our results, indicating that there are notable differences in country names between our two data frames. Of course, we already knew that, but using `anti_join()` here helps us see the differences.
+
+## Part 3: Synthesis
+
+To tie this lesson up in a nice bow, we're going to use joins to filter and mutate some data for visualization.
+
+### Exercise 7
+
+Let's use a semi-join to get FLIS data for only African countries. In our first attempt, we'll create a separate data frame for African countries and join to that.
+
+```{r}
+
+```
+
+Here is another way of writing `semi_join()`, in which we explicitly set our `x` variable (the left-hand table) and our `y` variable (the right-hand table):
+
+```{r}
+
+```
+
+This second approach produces the same result as the first approach, but it keeps our RStudio environment a little bit cleaner because it doesn't add the `african_countries` data frame. Instead, we simply calculate the filtered countries table as part of our semi-join.
+
+Both of these approaches are totally valid! By creating `african_countries` and persisting that data frame in our RStudio environment, we make it easy to refer back to that subset of our data if we need it for repetitive tasks, but it comes at the cost of potentially cluttering RStudio a bit.
+
+On the other hand, if we don't need to refer to that subset repeatedly, we can take the more streamlined approach done in our second example, which gets the same result but does not persist the data.
+
+### Exercise 8
+
+In this exercise, we're going to visualize female-to-male workforce participation ratios against our FLIS figures. However, the data we need to do so is spread across four different data frames right now:
+
+-   `countries` has identifying info about countries (source = WID)
+-   `labor` has our yearly FLIS measurements (source = WID)
+-   `worldbank` has identifying info about countries (source = World Bank)
+-   `lfratio` (which we're about to load) has yearly measurements of the ratio of female-to-male workforce participation
+
+Let's start by loading in the fourth data frame, then take a look at it.
+
+```{r}
+#| label: load-data-pt2
+#| echo: true
+#| message: false
+
+lfratio <- read_csv("../../data/WorldBank_FemaleToMale_LaborForceParticipation.csv") |>
+  filter(!is.na(`Country Code`))
+
+```
+
+If we use glimpse to take a look at the data, we'll see that this is a column-wise dataset that is extremely un-tidy.
+
+```{r}
+glimpse(lfratio)
+```
+
+So let's use `pivot_longer()` to tidy the data.
+
+::: callout-tip
+We'll also need to convert some of our data types in here and extract text from within some columns, so let's build ourselves a little data pipeline.
+:::
+
+```{r}
+
+```
+
+::: callout-tip
+The search pattern we're using in the `names_pattern` argument of the `pivot_longer()` function is using what's known as a **regular expression (or regex)** to detect the occurrence of a specific pattern. In this case, the regex we're specifying retrieves the first four characters of our column names, allowing us to get only the 4-digit years, and discarding the extra text at the end of each column name.
+:::
+
+### Exercise 9
+
+Now that we've pivoted the ratio of female-to-male participation, we can note that the country codes in our data are 3-digit codes. However, as we look back at our data, we need to keep the following constraints in mind:
+
+-   The `labor` data frame uses country names to identify each row
+-   The `lfratio_pivoted` data frame uses 3-digit country codes to identify each row
+-   The `countries` data frame (WID) contains the right country names to use when joining to our `labor` data frame
+-   The `worldbank` data frame has both 2-digit and 3-digit country codes, but the country names vary significantly from those in our `WID` and `labor` data frames.
+
+This is data from two different sources spread across four tables, but there is enough shared data between them that we can leverage joins to unify everything. It requires us to carefully traverse these tables, which is going to be a multi-step process with several joins, so let's go through this iteratively:
+
+```{r}
+
+```
+
+**Congrats!** This pipeline, as complicated as it is, produces a combined data frame that cleanly represents our data:
+
+-   The grain is one row per country per year.
+-   We have variables for both FLIS and workforce participation.
+-   We have categorical variables like region and subregion we can use for analysis.
+
+Now let's take that data, pipe it into `ggplot`, and see if we can spot anything interesting.
+
+```{r}
+
+
+```
+
+## Analysis
+
+What can we possibly infer about female labor income share and workforce participation from these visualizations?
+
+
+
+# Wrap-up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.
